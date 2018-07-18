@@ -1,10 +1,10 @@
 import unittest
-from data import entries, Entry, ModelNotFoundException
+from data import Mock, Entry, ModelNotFoundException
 
 
 class EntryMockModelTestCase(unittest.TestCase):
     def setUp(self):
-        self.entries = entries()
+        self.entries = Mock.entries()
         Entry.set_values(self.entries)
 
     def test_it_lists_all_entries(self):

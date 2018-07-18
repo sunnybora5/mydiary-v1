@@ -1,4 +1,5 @@
-from data import entries
+from data import Mock
+from datetime import datetime
 
 
 class ModelNotFoundException(Exception):
@@ -10,7 +11,7 @@ class Entry:
         pass
 
     # These are the default values. Each value has an id, title and body.
-    __values = entries()
+    __values = Mock.entries()
 
     # This variable is used to ensure all values have unique ids.
     __autoincrement_id = 5  # type: int
@@ -55,7 +56,8 @@ class Entry:
         entry = {
             'id': Entry.__autoincrement_id,
             'title': title,
-            'body': body
+            'body': body,
+            'created_at': datetime.now()
         }
         Entry.__values.append(entry)
         return entry

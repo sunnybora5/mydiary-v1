@@ -14,8 +14,7 @@ class EntryMockModelTestCase(unittest.TestCase):
         # The second index of dummy entries has id == 3
         self.assertEqual(self.entries[2], Entry.get(3))
         self.assertNotEqual(self.entries[3], Entry.get(3))
-
-    def test_it_returns_none_on_attempt_to_get_a_non_existent_model(self):
+        # Returns None for non-existent entries
         self.assertIsNone(Entry.get(51115))
 
     def test_it_creates_new_entries(self):
@@ -36,14 +35,12 @@ class EntryMockModelTestCase(unittest.TestCase):
         updated_entry = Entry.update(2, title, body)
         self.assertEqual(updated_entry, Entry.get(2))
         self.assertDictContainsSubset({'title': title, 'body': body}, updated_entry)
-
-    def test_it_fails_on_attempt_to_update_non_existent_models(self):
+        # Fails for non-existent entries
         with self.assertRaises(ModelNotFoundException):
             Entry.update(71115, 'Foo', 'Bar')
 
     def test_it_deletes_entries(self):
         self.assertTrue(Entry.delete(3))
-
-    def test_it_fails_on_attempt_to_delete_non_existent_models(self):
+        # Fails for non-existent entries
         with self.assertRaises(ModelNotFoundException):
             Entry.delete(91155)

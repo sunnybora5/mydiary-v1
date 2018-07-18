@@ -1,14 +1,14 @@
 import json
 import unittest
 from app import app
-from data import entries, Entry
+from data import Mock, Entry
 
 
 class EntryApiTestCase(unittest.TestCase):
 
     def setUp(self):
         self.client = app.test_client(self)
-        self.entries = entries()
+        self.entries = Mock.entries()
         Entry.set_values(self.entries)
 
     def test_it_lists_all_entries(self):

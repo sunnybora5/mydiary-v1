@@ -2,7 +2,7 @@ class Entry:
     def __init__(self):
         pass
 
-    entries = [
+    values = [
         {
             'id': 1,
             'title': 'Nibh praesent tristique magna sit',
@@ -87,4 +87,11 @@ class Entry:
         This function generates dummy entries. Each entry has an id, title and body.
         :rtype: list
         """
-        return Entry.entries
+        return Entry.values
+
+    @staticmethod
+    def get(entry_id):
+        for entry in Entry.values:
+            if entry['id'] == entry_id:
+                return entry
+        return None

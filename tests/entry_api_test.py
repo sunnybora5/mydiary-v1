@@ -8,8 +8,9 @@ from app.models import Entry
 class EntryApiTestCase(unittest.TestCase):
 
     def setUp(self):
+        # Get fresh copies of mock entries
         self.entries = Mock.entries()
-        Entry.set_values(self.entries)
+        Entry.set_values(Mock.entries())
         self.client = app.test_client(self)
 
     def test_it_lists_all_entries(self):

@@ -1,7 +1,7 @@
 from os.path import dirname
 from datetime import datetime
 
-
+NOT_FOUND_MSG = 'Not found.'
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 ROOT_DIRECTORY = dirname(__file__)
 

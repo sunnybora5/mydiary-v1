@@ -3,6 +3,7 @@ import unittest
 from app import app
 from mock import Mock
 from app.models import Entry
+from utils import NOT_FOUND_MSG
 
 
 class EntryApiTestCase(unittest.TestCase):
@@ -46,7 +47,7 @@ class EntryApiTestCase(unittest.TestCase):
         response = self.client.delete('/api/v1/entries/81115')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.mimetype, 'application/json')
-        self.assertEqual({"error": "Not found."}, json.loads(response.data))
+        self.assertEqual({"error": NOT_FOUND_MSG}, json.loads(response.data))
 
     def test_it_deletes_entries(self):
         response = self.client.delete('/api/v1/entries/2')
@@ -61,4 +62,4 @@ class EntryApiTestCase(unittest.TestCase):
         response = self.client.delete('/api/v1/entries/71115')
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.mimetype, 'application/json')
-        self.assertEqual({"error": "Not found."}, json.loads(response.data))
+        self.assertEqual({"error": NOT_FOUND_MSG}, json.loads(response.data))

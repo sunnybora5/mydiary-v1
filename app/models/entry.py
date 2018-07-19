@@ -1,4 +1,4 @@
-from data import Mock
+from mock import Mock
 from datetime import datetime
 
 

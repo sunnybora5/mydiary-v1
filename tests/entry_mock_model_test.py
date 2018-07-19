@@ -1,5 +1,6 @@
 import unittest
-from data import Mock, Entry, ModelNotFoundException
+from mock import Mock
+from app.models import Entry, ModelNotFoundException
 
 
 class EntryMockModelTestCase(unittest.TestCase):

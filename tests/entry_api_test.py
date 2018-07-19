@@ -1,7 +1,8 @@
 import json
 import unittest
 from app import app
-from data import Mock, Entry
+from mock import Mock
+from app.models import Entry
 
 
 class EntryApiTestCase(unittest.TestCase):
@@ -43,5 +44,5 @@ class EntryApiTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')
         all_entries = json.loads(self.client.get('/entries').data)
-        # Ensure that entry with id == 3 no longer exists on the data
+        # Ensure that entry with id == 3 no longer exists on the models
         self.assertFalse(any(entry['id'] == 2 for entry in all_entries))

@@ -40,6 +40,12 @@ class EntryApiTestCase(unittest.TestCase):
         self.assertEqual(response.mimetype, 'application/json')
         self.assertDictContainsSubset(updates, json.loads(response.data))
 
+    def test_update_fails_on_model_not_found(self):
+        response = self.client.delete('/api/v1/entries/81115')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.mimetype, 'application/json')
+        self.assertEqual({"error": "Not found."}, json.loads(response.data))
+
     def test_it_deletes_entries(self):
         response = self.client.delete('/api/v1/entries/2')
         self.assertEqual(response.status_code, 200)
@@ -48,3 +54,9 @@ class EntryApiTestCase(unittest.TestCase):
         # Ensure that entry with id == 2 no longer exists on the models
         all_entries = json.loads(self.client.get('/api/v1/entries').data)['entries']
         self.assertFalse(any(entry['id'] == 2 for entry in all_entries))
+
+    def test_delete_fails_on_model_not_found(self):
+        response = self.client.delete('/api/v1/entries/71115')
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.mimetype, 'application/json')
+        self.assertEqual({"error": "Not found."}, json.loads(response.data))

@@ -1,4 +1,6 @@
 from flask import Flask
+from app.handlers import HttpHandler
+from models import ModelNotFoundException
 from app.controllers import EntryController
 
 # Create flask app
@@ -29,3 +31,9 @@ def update(entry_id):
 @app.route('/api/v1/entries/<int:entry_id>', methods=['DELETE'])
 def delete(entry_id):
     return EntryController.delete(entry_id)
+
+
+# Define API error handlers
+@app.errorhandler(ModelNotFoundException)
+def model_not_found(exception):
+    return HttpHandler.handle(exception)

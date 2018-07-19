@@ -2,7 +2,6 @@ from os.path import dirname
 from datetime import datetime
 
 
-MODEL_NOT_FOUND = 404
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 ROOT_DIRECTORY = dirname(__file__)
 

@@ -33,14 +33,14 @@ class EntryApiTestCase(unittest.TestCase):
         response = self.client.post('/api/v1/entries', data=new_entry)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.mimetype, 'application/json')
-        self.assertDictContainsSubset(new_entry, json.loads(response.data))
+        self.assertDictContainsSubset(new_entry, json.loads(response.data)['entry'])
 
     def test_it_updates_entries(self):
         updates = {'title': 'A new title', 'body': 'A new body'}
         response = self.client.put('/api/v1/entries/3', data=updates)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')
-        self.assertDictContainsSubset(updates, json.loads(response.data))
+        self.assertDictContainsSubset(updates, json.loads(response.data)['entry'])
 
     def test_update_fails_on_model_not_found(self):
         response = self.client.delete('/api/v1/entries/81115')

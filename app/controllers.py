@@ -19,13 +19,13 @@ class EntryController:
     def create():
         title = request.form['title']
         body = request.form['body']
-        return jsonify(Entry.create(title, body)), 201
+        return jsonify({'entry': Entry.create(title, body)}), 201
 
     @staticmethod
     def update(entry_id):
         title = request.form['title']
         body = request.form['body']
-        return jsonify(Entry.update(entry_id, title, body)), 200
+        return jsonify({'entry': Entry.update(entry_id, title, body)}), 200
 
     @staticmethod
     def delete(entry_id):

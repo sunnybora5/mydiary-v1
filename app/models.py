@@ -1,6 +1,5 @@
 from datetime import datetime
 from mock import Mock
-from utils import parse_date
 
 
 class ModelNotFoundException(Exception):
@@ -13,9 +12,6 @@ class Entry:
 
     @staticmethod
     def set_values(values):
-        # Each value has an id, title, body and created_at.
-        for i, entry in enumerate(values):
-            values[i]['created_at'] = parse_date(entry['created_at'])
         Entry.__values = values
 
     # This variable is a list of entries. The entries are dictionaries.
@@ -101,4 +97,4 @@ class Entry:
 
 
 # Initialize model with mock entries
-Entry.set_values(Mock.entries())
+Entry.set_values(Mock.entries(parse_dates=True))

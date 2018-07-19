@@ -1,5 +1,5 @@
 import json
-from utils import full_path
+from utils import full_path, parse_date
 
 
 class Mock:
@@ -7,8 +7,12 @@ class Mock:
         pass
 
     @staticmethod
-    def entries():
-        return Mock.__read_data('entries')
+    def entries(parse_dates=False):
+        entries = Mock.__read_data('entries')
+        if parse_dates is True:
+            for i, entry in enumerate(entries):
+                entries[i]['created_at'] = parse_date(entry['created_at'])
+        return entries
 
     @staticmethod
     def __read_data(resource):

@@ -7,6 +7,10 @@ class EntryController:
         pass
 
     @staticmethod
+    def count():
+        return jsonify({'count': Entry.count()}), 200
+
+    @staticmethod
     def all():
         entries = Entry.all()
         return jsonify({'entries': entries, 'count': len(entries)}), 200

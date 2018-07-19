@@ -29,6 +29,10 @@ class Entry:
         return Entry.__autoincrement_id
 
     @staticmethod
+    def count():
+        return len(Entry.__values)
+
+    @staticmethod
     def all():
         """
         Returns all the entries.

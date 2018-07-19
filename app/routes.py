@@ -8,6 +8,7 @@ app = Flask(__name__)
 
 
 # Define API endpoints
+# Entry resource routes
 @app.route('/api/v1/entries')
 def all_entries():
     return EntryController.all()
@@ -31,6 +32,12 @@ def update(entry_id):
 @app.route('/api/v1/entries/<int:entry_id>', methods=['DELETE'])
 def delete(entry_id):
     return EntryController.delete(entry_id)
+
+
+# Entry stats routes
+@app.route('/api/v1/entries/stats/count', methods=['GET'])
+def entry_stat_count():
+    return EntryController.count()
 
 
 # Define API error handlers

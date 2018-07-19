@@ -68,4 +68,4 @@ class EntryApiTestCase(unittest.TestCase):
         response = self.client.get('/api/v1/entries/stats/count')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')
-        self.assertEqual(len(self.entries), json.dumps(response.data)['count'])
+        self.assertEqual(len(self.entries), json.loads(response.data)['count'])

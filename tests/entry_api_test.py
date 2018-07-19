@@ -44,6 +44,7 @@ class EntryApiTestCase(unittest.TestCase):
         response = self.client.delete('/api/v1/entries/2')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')
-        all_entries = json.loads(self.client.get('/api/v1/entries').data)['entries']
+        self.assertEqual({'message': 'Entry deleted.'}, json.loads(response.data))
         # Ensure that entry with id == 2 no longer exists on the models
+        all_entries = json.loads(self.client.get('/api/v1/entries').data)['entries']
         self.assertFalse(any(entry['id'] == 2 for entry in all_entries))

@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, abort
 from app.models import Entry
 
 
@@ -24,8 +24,14 @@ class EntryController:
     def update(entry_id):
         title = request.form['title']
         body = request.form['body']
-        return jsonify(Entry.update(entry_id, title, body)), 200
+        result = Entry.update(entry_id, title, body)
+        if isinstance(result, dict):
+            return jsonify(result), 200
+        abort(result)
 
     @staticmethod
     def delete(entry_id):
-        return jsonify(Entry.delete(entry_id)), 200
+        result = Entry.delete(entry_id)
+        if result is True:
+            return jsonify({'message': 'Entry deleted.'}), 200
+        abort(result)

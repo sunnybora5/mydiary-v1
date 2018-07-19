@@ -1,10 +1,6 @@
 from datetime import datetime
-from utils import parse_date
 from mock import Mock
-
-
-class ModelNotFoundException(Exception):
-    pass
+from utils import parse_date, MODEL_NOT_FOUND
 
 
 class Entry:
@@ -73,27 +69,27 @@ class Entry:
         :param entry_id:
         :param title:
         :param body:
-        :rtype: dict
+        :rtype: dict or int
         """
         for i, entry in enumerate(Entry.__values):
             if entry['id'] == entry_id:
                 Entry.__values[i]['title'] = title
                 Entry.__values[i]['body'] = body
                 return Entry.__values[i]
-        raise ModelNotFoundException
+        return MODEL_NOT_FOUND
 
     @staticmethod
     def delete(entry_id):
         """
         Deletes the specified entry.
         :param entry_id:
-        :return:
+        :rtype: bool or int
         """
         for i, entry in enumerate(Entry.__values):
             if entry['id'] == entry_id:
                 del Entry.__values[i]
                 return True
-        raise ModelNotFoundException
+        return MODEL_NOT_FOUND
 
 
 # Initialize model with mock entries

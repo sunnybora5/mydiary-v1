@@ -1,6 +1,7 @@
 import unittest
 from mock import Mock
-from app.models import Entry, ModelNotFoundException
+from app.models import Entry
+from utils import MODEL_NOT_FOUND
 
 
 class EntryMockModelTestCase(unittest.TestCase):
@@ -37,11 +38,9 @@ class EntryMockModelTestCase(unittest.TestCase):
         self.assertEqual(updated_entry, Entry.get(2))
         self.assertDictContainsSubset({'title': title, 'body': body}, updated_entry)
         # Fails for non-existent entries
-        with self.assertRaises(ModelNotFoundException):
-            Entry.update(71115, 'Foo', 'Bar')
+        self.assertEqual(MODEL_NOT_FOUND, Entry.update(71115, 'Foo', 'Bar'))
 
     def test_it_deletes_entries(self):
         self.assertTrue(Entry.delete(3))
         # Fails for non-existent entries
-        with self.assertRaises(ModelNotFoundException):
-            Entry.delete(91155)
+        self.assertEqual(MODEL_NOT_FOUND, Entry.delete(91155))

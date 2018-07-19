@@ -48,3 +48,15 @@ class EntryMockModelTestCase(unittest.TestCase):
 
     def test_it_gets_entry_count(self):
         self.assertEqual(len(self.entries), Entry.count())
+
+    def test_entry_count_is_always_accurate(self):
+        # when new entry is created
+        count_before = Entry.count()
+        Entry.create('A title', 'A body')
+        count_after = Entry.count()
+        self.assertEqual(count_after, count_before + 1)
+        # when an entry is deleted
+        count_before = Entry.count()
+        Entry.delete(2)
+        count_after = Entry.count()
+        self.assertEqual(count_after, count_before - 1)

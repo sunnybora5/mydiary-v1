@@ -45,3 +45,6 @@ class EntryMockModelTestCase(unittest.TestCase):
         # Fails for non-existent entries
         with self.assertRaises(ModelNotFoundException):
             Entry.delete(91155)
+
+    def test_it_gets_entry_count(self):
+        self.assertEqual(len(self.entries), Entry.count())

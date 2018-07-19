@@ -65,7 +65,7 @@ class EntryApiTestCase(unittest.TestCase):
         self.assertEqual({"error": NOT_FOUND_MSG}, json.loads(response.data))
 
     def test_it_gets_entry_count_stat(self):
-        response = self.client.delete('/api/v1/entries/stats/count')
+        response = self.client.get('/api/v1/entries/stats/count')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')
         self.assertEqual(len(self.entries), json.dumps(response.data)['count'])

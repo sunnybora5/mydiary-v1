@@ -5,8 +5,8 @@ from app.models import Entry, ModelNotFoundException
 
 class EntryMockModelTestCase(unittest.TestCase):
     def setUp(self):
-        self.entries = Mock.entries()
-        Entry.set_values(self.entries)
+        self.entries = Mock.entries(parse_dates=True)
+        Entry.set_values(Mock.entries(parse_dates=True))
 
     def test_it_lists_all_entries(self):
         self.assertEqual(self.entries, Entry.all())

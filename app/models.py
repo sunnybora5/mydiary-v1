@@ -1,5 +1,6 @@
-from mock import Mock
 from datetime import datetime
+from utils import parse_date
+from mock import Mock
 
 
 class ModelNotFoundException(Exception):
@@ -10,15 +11,18 @@ class Entry:
     def __init__(self):
         pass
 
-    # These are the default values. Each value has an id, title and body.
-    __values = Mock.entries()
+    @staticmethod
+    def set_values(values):
+        # Each value has an id, title, body and created_at.
+        for i, entry in enumerate(values):
+            values[i]['created_at'] = parse_date(entry['created_at'])
+        Entry.__values = values
+
+    # This variable is a list of entries. The entries are dictionaries.
+    __values = []
 
     # This variable is used to ensure all values have unique ids.
     __autoincrement_id = 5  # type: int
-
-    @staticmethod
-    def set_values(values):
-        Entry.__values = values
 
     @staticmethod
     def get_latest_id():
@@ -90,3 +94,7 @@ class Entry:
                 del Entry.__values[i]
                 return True
         raise ModelNotFoundException
+
+
+# Initialize model with mock entries
+Entry.set_values(Mock.entries())

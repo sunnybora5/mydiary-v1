@@ -17,7 +17,9 @@ class EntryApiTestCase(unittest.TestCase):
         response = self.client.get('/api/v1/entries')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')
-        self.assertEqual(json.loads(response.data), {'entries': self.entries})
+        self.assertEqual(json.loads(response.data), {
+            'entries': self.entries, 'count': len(self.entries)
+        })
 
     def test_it_gets_a_specific_entry(self):
         response = self.client.get('/api/v1/entries/4')

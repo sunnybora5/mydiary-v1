@@ -1,5 +1,5 @@
 from flask import Flask
-from app.handlers import HttpHandler
+from app.handlers import ExceptionHandler, HttpHandler
 from app.models import ModelNotFoundException
 from app.controllers import EntryController
 
@@ -43,4 +43,9 @@ def entry_stat_count():
 # Define API error handlers
 @app.errorhandler(ModelNotFoundException)
 def model_not_found(exception):
-    return HttpHandler.handle(exception)
+    return ExceptionHandler.handle(exception)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return HttpHandler.handle(404)

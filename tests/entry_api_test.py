@@ -81,3 +81,16 @@ class EntryApiTestCase(unittest.TestCase):
         self.client.delete('/api/v1/entries/4')
         new_count = json.loads(self.client.get('/api/v1/entries/stats/count').data)['count']
         self.assertEqual(new_count, old_count - 1)
+
+    def test_invalid_urls_trigger_not_found(self):
+        responses = []
+        data = {'title': 'A title', 'body': 'A body'}
+        urls = ['/gibberish', '/api/v1/entries/', '/api/v1/entries/x']
+        for url in urls:
+            responses.append(self.client.get(url))
+            responses.append(self.client.post(url, data=data))
+            responses.append(self.client.put(url, data=data))
+            responses.append(self.client.delete(url))
+        for response in responses:
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(response.mimetype, 'application/json')

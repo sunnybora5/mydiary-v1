@@ -1,6 +1,6 @@
 from flask import Flask
 from app.handlers import HttpHandler
-from models import ModelNotFoundException
+from app.models import ModelNotFoundException
 from app.controllers import EntryController
 
 # Create flask app

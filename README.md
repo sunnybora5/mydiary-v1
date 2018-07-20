@@ -1,5 +1,7 @@
 # MyDiary API v1
 
+[![Build Status](https://travis-ci.org/mutaimwiti/mydiary-v1.svg?branch=ch-travis-ci)](https://travis-ci.org/mutaimwiti/mydiary-v1)
+
 This is v1 of a RESTful API to power MyDiary front-end pages.
 
 The API is implemented using Flask Python Framework.

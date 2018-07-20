@@ -2,6 +2,7 @@ from os.path import dirname
 from datetime import datetime
 
 NOT_FOUND_MSG = 'Not found.'
+SERVER_ERROR_MSG = 'Internal server error.'
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 ROOT_DIRECTORY = dirname(__file__)
 

@@ -1,6 +1,9 @@
 # MyDiary API v1
 
-[![Build Status](https://travis-ci.org/mutaimwiti/mydiary-v1.svg?branch=api)](https://travis-ci.org/mutaimwiti/mydiary-v1)
+[![Build Status](https://travis-ci.org/mutaimwiti/mydiary-v1.svg?branch=ch-test-coverage)](
+https://travis-ci.org/mutaimwiti/mydiary-v1)
+[![Coverage Status](https://coveralls.io/repos/github/mutaimwiti/mydiary-v1/badge.svg?branch=ch-test-coverage)](
+https://coveralls.io/github/mutaimwiti/mydiary-v1?branch=master)
 
 This is v1 of a RESTful API to power MyDiary front-end pages.
 

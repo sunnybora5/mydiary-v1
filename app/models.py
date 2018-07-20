@@ -21,6 +21,13 @@ class Entry:
     __autoincrement_id = 5  # type: int
 
     @staticmethod
+    def __get_entry_index(entry_id):
+        for i, entry in enumerate(Entry.__values):
+            if entry['id'] == entry_id:
+                return i
+        raise ModelNotFoundException
+
+    @staticmethod
     def get_latest_id():
         return Entry.__autoincrement_id
 
@@ -43,12 +50,7 @@ class Entry:
         :param entry_id:
         :rtype: dict or None
         """
-        if entry_id > Entry.__autoincrement_id:
-            return None
-        for entry in Entry.__values:
-            if entry['id'] == entry_id:
-                return entry
-        return None
+        return Entry.__values[Entry.__get_entry_index(entry_id)]
 
     @staticmethod
     def create(title, body):
@@ -77,13 +79,11 @@ class Entry:
         :param body:
         :rtype: dict
         """
-        for i, entry in enumerate(Entry.__values):
-            if entry['id'] == entry_id:
-                Entry.__values[i]['title'] = title
-                Entry.__values[i]['body'] = body
-                Entry.__values[i]['updated_at'] = datetime.now()
-                return Entry.__values[i]
-        raise ModelNotFoundException
+        index = Entry.__get_entry_index(entry_id)
+        Entry.__values[index]['title'] = title
+        Entry.__values[index]['body'] = body
+        Entry.__values[index]['updated_at'] = datetime.now()
+        return Entry.__values[index]
 
     @staticmethod
     def delete(entry_id):
@@ -92,11 +92,8 @@ class Entry:
         :param entry_id:
         :rtype: bool
         """
-        for i, entry in enumerate(Entry.__values):
-            if entry['id'] == entry_id:
-                del Entry.__values[i]
-                return True
-        raise ModelNotFoundException
+        del Entry.__values[Entry.__get_entry_index(entry_id)]
+        return True
 
 
 # Initialize model with mock entries

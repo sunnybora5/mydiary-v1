@@ -15,8 +15,9 @@ class EntryMockModelTestCase(unittest.TestCase):
         # The second index of dummy entries has id == 3
         self.assertEqual(self.entries[2], Entry.get(3))
         self.assertNotEqual(self.entries[3], Entry.get(3))
-        # Returns None for non-existent entries
-        self.assertIsNone(Entry.get(51115))
+        # Fails for non-existent entries
+        with self.assertRaises(ModelNotFoundException):
+            Entry.get(51115)
 
     def test_it_creates_new_entries(self):
         title = 'A title'

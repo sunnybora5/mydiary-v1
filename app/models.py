@@ -57,11 +57,13 @@ class Entry:
         :rtype: dict
         """
         Entry.__autoincrement_id += 1
+        now = datetime.now()
         entry = {
             'id': Entry.__autoincrement_id,
             'title': title,
             'body': body,
-            'created_at': datetime.now()
+            'created_at': now,
+            'updated_at': now
         }
         Entry.__values.append(entry)
         return entry
@@ -79,6 +81,7 @@ class Entry:
             if entry['id'] == entry_id:
                 Entry.__values[i]['title'] = title
                 Entry.__values[i]['body'] = body
+                Entry.__values[i]['updated_at'] = datetime.now()
                 return Entry.__values[i]
         raise ModelNotFoundException
 

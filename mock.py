@@ -12,6 +12,7 @@ class Mock:
         if parse_dates is True:
             for i, entry in enumerate(entries):
                 entries[i]['created_at'] = parse_date(entry['created_at'])
+                entries[i]['updated_at'] = parse_date(entry['updated_at'])
         return entries
 
     @staticmethod

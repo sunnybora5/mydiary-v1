@@ -36,6 +36,39 @@ class EntryApiTestCase(unittest.TestCase):
         self.assertEqual(response.mimetype, 'application/json')
         self.assertDictContainsSubset(new_entry, json.loads(response.data)['entry'])
 
+    def test_creation_fails_when_data_does_not_meet_min_length(self):
+        short_data = {'title': 'Cook', 'body': 'Short'}
+        response = self.client.post('/api/v1/entries', data=short_data)
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.mimetype, 'application/json')
+        errors = {
+            'title': ['The title field must have a minimum length of 5.'],
+            'body': ['The body field must have a minimum length of 10.'],
+        }
+        self.assertEqual(errors, json.loads(response.data)['errors'])
+
+    def test_creation_fails_when_data_exceeds_max_length(self):
+        long_text = self.entries[0]['body']
+        long_data = {'title': long_text, 'body': long_text + long_text}
+        response = self.client.post('/api/v1/entries', data=long_data)
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.mimetype, 'application/json')
+        errors = {
+            'title': ['The title field must have a maximum length of 255.'],
+            'body': ['The body field must have a maximum length of 1000.'],
+        }
+        self.assertEqual(errors, json.loads(response.data)['errors'])
+
+    def test_creation_fails_when_data_is_missing(self):
+        response = self.client.post('/api/v1/entries', data={})
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.mimetype, 'application/json')
+        errors = {
+            'title': ['The title field is required.'],
+            'body': ['The body field is required.'],
+        }
+        self.assertEqual(errors, json.loads(response.data)['errors'])
+
     def test_it_updates_entries(self):
         updates = {'title': 'A new title', 'body': 'A new body'}
         response = self.client.put('/api/v1/entries/3', data=updates)
@@ -48,6 +81,39 @@ class EntryApiTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.mimetype, 'application/json')
         self.assertEqual({"error": NOT_FOUND_MSG}, json.loads(response.data))
+
+    def test_update_fails_when_data_does_not_meet_min_length(self):
+        short_data = {'title': 'Cook', 'body': 'Short'}
+        response = self.client.put('/api/v1/entries/4', data=short_data)
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.mimetype, 'application/json')
+        errors = {
+            'title': ['The title field must have a minimum length of 5.'],
+            'body': ['The body field must have a minimum length of 10.'],
+        }
+        self.assertEqual(errors, json.loads(response.data)['errors'])
+
+    def test_update_fails_when_data_exceeds_max_length(self):
+        long_text = self.entries[0]['body']
+        long_data = {'title': long_text, 'body': long_text + long_text}
+        response = self.client.put('/api/v1/entries/4', data=long_data)
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.mimetype, 'application/json')
+        errors = {
+            'title': ['The title field must have a maximum length of 255.'],
+            'body': ['The body field must have a maximum length of 1000.'],
+        }
+        self.assertEqual(errors, json.loads(response.data)['errors'])
+
+    def test_update_fails_when_data_is_missing(self):
+        response = self.client.put('/api/v1/entries/4', data={})
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.mimetype, 'application/json')
+        errors = {
+            'title': ['The title field is required.'],
+            'body': ['The body field is required.'],
+        }
+        self.assertEqual(errors, json.loads(response.data)['errors'])
 
     def test_it_deletes_entries(self):
         response = self.client.delete('/api/v1/entries/2')

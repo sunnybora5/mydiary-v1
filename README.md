@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/mutaimwiti/mydiary-v1.svg?branch=api)](
 https://travis-ci.org/mutaimwiti/mydiary-v1)
-[![Coverage Status](https://coveralls.io/repos/github/mutaimwiti/mydiary-v1/badge.svg)](
-https://coveralls.io/github/mutaimwiti/mydiary-v1)
+[![Coverage Status](https://coveralls.io/repos/github/mutaimwiti/mydiary-v1/badge.svg?branch=api)](
+https://coveralls.io/github/mutaimwiti/mydiary-v1?branch=api)
 
 This is v1 of a RESTful API to power MyDiary front-end pages.
 

@@ -47,8 +47,8 @@ class Validator:
         try:
             int_value = int(value)
             return int_value
-        except TypeError:
-            raise InvalidTypeException(value + 'is not a valid integer.')
+        except ValueError:
+            raise InvalidTypeException('"' + value + '" is not a valid integer.')
 
     @staticmethod
     def error(field, message):
@@ -70,7 +70,7 @@ class Validator:
         length = Validator.parse_int(length)
         try:
             if len(self.value(field)) < length:
-                return 'must be a minimum of ' + str(length)
+                return 'must have a minimum length of ' + str(length) + '.'
             else:
                 return True
         except TypeError:
@@ -86,7 +86,7 @@ class Validator:
         length = Validator.parse_int(length)
         try:
             if len(self.value(field)) > length:
-                return 'must be a max of ' + str(length)
+                return 'must have a maximum length of ' + str(length) + '.'
             else:
                 return True
         except TypeError:
@@ -167,14 +167,15 @@ class Validator:
                 if self.is_required(field):
                     # field is not set but is required
                     # this will be the only error reported for this field
-                    errors.append(Validator.error(field, 'is required'))
+                    errors.append(Validator.error(field, 'is required.'))
             if len(errors) > 0:
                 # errors were found for the current field
                 all_errors[field] = errors
         if len(all_errors) > 0:
             # an error or errors were found in any of the fields
             raise ValidationException({'errors': all_errors})
+        return True
 
 
 def validate(request, rules):
-    Validator(request, rules).validate()
+    return Validator(request, rules).validate()

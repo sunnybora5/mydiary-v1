@@ -38,3 +38,10 @@ class BaseTestCase(unittest.TestCase):
             }
         }
         self.assertEqual(errors, context.exception.errors)
+
+    def test_duplicate_validators_fail(self):
+        request = {'test_field': 'Some value'}
+        rules = {'test_field': 'required|min:5|min:17'}
+        with self.assertRaises(InvalidValidatorException) as context:
+            validate(request, rules)
+        self.assertTrue("Duplicate validation rules ['min'] are not allowed." in str(context.exception))

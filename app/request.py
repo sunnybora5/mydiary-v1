@@ -60,6 +60,18 @@ class Validator:
         """
         return 'The ' + field + ' field ' + message
 
+    @staticmethod
+    def duplicates(rules):
+        seen = []
+        duplicates = []
+        for rule in rules:
+            name = rule.split(':').pop(0)
+            if name in seen:
+                duplicates.append(name)
+            else:
+                seen.append(name)
+        return duplicates
+
     def min(self, field, length):
         """
         Validates a field for a minimum length.
@@ -112,12 +124,17 @@ class Validator:
 
     def rules(self, field):
         """
-        Gets all the validation rules for the given field.
+        Gets all the validation rules for the given field. If there
+        are duplicate rules it throws an InvalidValidatorException
         If required rule is set it excludes it. If there
         are no rules it returns an empty list.
         :rtype: list
         """
-        rules = self.validation_rules[field].split('|')
+        rules_string = self.validation_rules[field]
+        rules = rules_string.split('|')
+        duplicates = Validator.duplicates(rules)
+        if len(duplicates) > 0:
+            raise InvalidValidatorException('Duplicate validation rules ' + str(duplicates) + ' are not allowed.')
         if 'required' in rules:
             rules.remove('required')
         if len(rules) == 1 and rules[0] == '':

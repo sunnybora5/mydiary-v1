@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from app.models import Entry
+from app.request import validate
 
 
 class EntryController:
@@ -21,15 +22,15 @@ class EntryController:
 
     @staticmethod
     def create():
-        title = request.form['title']
-        body = request.form['body']
-        return jsonify({'entry': Entry.create(title, body)}), 201
+        validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
+        entry = Entry.create(request.form['title'], request.form['body'])
+        return jsonify({'entry': entry}), 201
 
     @staticmethod
     def update(entry_id):
-        title = request.form['title']
-        body = request.form['body']
-        return jsonify({'entry': Entry.update(entry_id, title, body)}), 200
+        validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
+        entry = Entry.update(entry_id, request.form['title'], request.form['body'])
+        return jsonify({'entry': entry}), 200
 
     @staticmethod
     def delete(entry_id):

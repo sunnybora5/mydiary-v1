@@ -2,6 +2,7 @@ from flask import Flask
 from app.handlers import ExceptionHandler, HttpHandler
 from app.models import ModelNotFoundException
 from app.controllers import EntryController
+from app.request import ValidationException
 
 # Create flask app
 app = Flask(__name__)
@@ -42,6 +43,11 @@ def entry_stat_count():
 
 # Define API error handlers
 @app.errorhandler(ModelNotFoundException)
+def model_not_found(exception):
+    return ExceptionHandler.handle(exception)
+
+
+@app.errorhandler(ValidationException)
 def model_not_found(exception):
     return ExceptionHandler.handle(exception)
 

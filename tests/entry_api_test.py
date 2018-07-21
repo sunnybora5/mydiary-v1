@@ -30,7 +30,7 @@ class EntryApiTestCase(unittest.TestCase):
         self.assertEqual(json.loads(response.data), {'entry': self.entries[3]})
 
     def test_it_creates_new_entries(self):
-        new_entry = {'title': 'A title', 'body': 'A body'}
+        new_entry = {'title': 'A title', 'body': 'A body to add'}
         response = self.client.post('/api/v1/entries', data=new_entry)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.mimetype, 'application/json')
@@ -72,8 +72,9 @@ class EntryApiTestCase(unittest.TestCase):
 
     def test_entry_count_is_always_accurate(self):
         # when new entry is created
+        data = {'title': 'A title', 'body': 'This is a body'}
         old_count = json.loads(self.client.get('/api/v1/entries/stats/count').data)['count']
-        self.client.post('/api/v1/entries', data={'title': 'A title', 'body': 'A body'})
+        self.client.post('/api/v1/entries', data=data)
         new_count = json.loads(self.client.get('/api/v1/entries/stats/count').data)['count']
         self.assertEqual(new_count, old_count + 1)
         # when an entry is deleted

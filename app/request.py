@@ -167,14 +167,18 @@ class Validator:
                     try:
                         parsed_rule = rule.split(':')
                         validator = getattr(self, parsed_rule.pop(0))
-                        if len(parsed_rule) > 0:
-                            # rule has an argument
-                            result = validator(field, parsed_rule.pop())
-                        else:
+                        # we only expect one argument if any
+                        if len(parsed_rule) == 0:
                             # rule has no argument
                             result = validator(field)
+                        elif len(parsed_rule) == 1:
+                            # rule has an argument
+                            result = validator(field, parsed_rule.pop(0))
+                        else:
+                            # more than one argument was given
+                            raise InvalidValidatorException('Rule [' + rule + ']' + ' has so more than one argument.')
                     except AttributeError:
-                        raise InvalidValidatorException('"' + rule + '"' + ' is an invalid validation rule.')
+                        raise InvalidValidatorException('Rule [' + rule + ']' + ' is an invalid validation rule.')
                     if result is not True:
                         # the validator did not pass
                         errors.append(Validator.error(field, result))

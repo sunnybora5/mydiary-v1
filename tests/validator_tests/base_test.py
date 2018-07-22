@@ -9,7 +9,7 @@ class BaseTestCase(unittest.TestCase):
         rules = {'test_field': 'gibberish'}
         with self.assertRaises(InvalidValidatorException) as context:
             validate(request, rules)
-        self.assertTrue('"gibberish" is an invalid validation rule.' in str(context.exception))
+        self.assertTrue('Rule [gibberish] is an invalid validation rule.' in str(context.exception))
 
     def test_multiple_rules_work(self):
         request = {'test_field': 'Some value'}
@@ -45,3 +45,10 @@ class BaseTestCase(unittest.TestCase):
         with self.assertRaises(InvalidValidatorException) as context:
             validate(request, rules)
         self.assertTrue("Duplicate validation rules ['min'] are not allowed." in str(context.exception))
+
+    def test_multiple_validator_arguments_fail(self):
+        request = {'test_field': 'Some value'}
+        rules = {'test_field': 'required|min:5:17'}
+        with self.assertRaises(InvalidValidatorException) as context:
+            validate(request, rules)
+        self.assertTrue('Rule [min:5:17] has so more than one argument.' in str(context.exception))

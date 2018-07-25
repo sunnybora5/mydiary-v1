@@ -1,4 +1,6 @@
 import psycopg2
+from psycopg2 import sql
+import psycopg2.extras
 from utils import env
 
 
@@ -26,3 +28,95 @@ class DBConnection:
     @staticmethod
     def get():
         return DBConnection.__get_connection()
+
+
+class DBQuery:
+    def __init__(self, table):
+        self.table = table
+        self.connection = DBConnection.get()
+        self.cursor = self.connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    @staticmethod
+    def attribute_equals_value(attributes):
+        """
+        An sql generator for a = b, j = k, m = n ...
+        :param attributes:
+        """
+        aggregate = []
+        for item in attributes:
+            aggregate.append(
+                sql.SQL("{} = {}").format(
+                    sql.Identifier(item), sql.Placeholder()
+                )
+            )
+        return sql.SQL(', ').join(aggregate)
+
+    def insert(self, data):
+        """
+        data is a dictionary containing field:value.
+        Example {'title': 'My title', 'body': 'My body'}
+        :type data: dict
+        :param data:
+        """
+        fields = data.keys()
+        values = data.values()
+        query = sql.SQL("insert into {} ({}) values ({})").format(
+            sql.Identifier(self.table),
+            sql.SQL(', ').join(map(sql.Identifier, fields)),
+            sql.SQL(', ').join(sql.Placeholder() * len(fields))
+        )
+        self.cursor.execute(query, values)
+        self.connection.commit()
+
+    def update(self, data, filters):
+        """
+        data is a dictionary containing field:value. So is
+        filters. data is what will be updated and filters
+        is specifies the filtering criteria.
+        Examples:
+        data = {'title': 'My title', 'body': 'My body'}
+        filters = {'id': 7}
+        :param filters: dict
+        :param data: dict
+        """
+        sets = DBQuery.attribute_equals_value(data)
+        wheres = DBQuery.attribute_equals_value(filters)
+        query = sql.SQL("update {} set {} where {}").format(
+            sql.Identifier(self.table),
+            sets,
+            wheres
+        )
+        values = data.values() + filters.values()
+        self.cursor.execute(query, values)
+        self.connection.commit()
+
+    def delete(self, filters):
+        # delete from table where condition
+        wheres = DBQuery.attribute_equals_value(filters)
+        query = sql.SQL("delete from {} where {}").format(
+            sql.Identifier(self.table),
+            wheres
+        )
+        self.cursor.execute(query, filters.values())
+        self.connection.commit()
+
+    def select(self, fields, filters):
+        wheres = DBQuery.attribute_equals_value(filters)
+        if fields is '*':
+            query = sql.SQL("select * from {} where {}").format(
+                sql.Identifier(self.table),
+                wheres
+            )
+        else:
+            query = sql.SQL("select {} from {} where {}").format(
+                sql.SQL(', ').join(map(sql.Identifier, fields)),
+                sql.Identifier(self.table),
+                wheres
+            )
+        self.cursor.execute(query, filters.values())
+        return self.cursor.fetchall()
+
+    def count(self):
+        query = sql.SQL("select count(*) from {}").format(sql.Identifier(self.table))
+        self.cursor.execute(query)
+        return self.cursor.fetchone()['count']

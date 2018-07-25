@@ -79,12 +79,10 @@ class DBQuery:
         :param filters: dict
         :param data: dict
         """
-        sets = DBQuery.attribute_equals_value(data)
-        wheres = DBQuery.attribute_equals_value(filters)
         query = sql.SQL("update {} set {} where {}").format(
             sql.Identifier(self.table),
-            sets,
-            wheres
+            DBQuery.attribute_equals_value(data),
+            DBQuery.attribute_equals_value(filters)
         )
         values = list(data.values()) + list(filters.values())
         self.cursor.execute(query, values)
@@ -92,10 +90,9 @@ class DBQuery:
 
     def delete(self, filters):
         # delete from table where condition
-        wheres = DBQuery.attribute_equals_value(filters)
         query = sql.SQL("delete from {} where {}").format(
             sql.Identifier(self.table),
-            wheres
+            DBQuery.attribute_equals_value(filters)
         )
         self.cursor.execute(query, list(filters.values()))
         self.connection.commit()

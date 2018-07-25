@@ -100,23 +100,42 @@ class DBQuery:
         self.cursor.execute(query, filters.values())
         self.connection.commit()
 
-    def select(self, fields, filters):
-        wheres = DBQuery.attribute_equals_value(filters)
+    def select(self, fields, filters=None):
         if fields is '*':
-            query = sql.SQL("select * from {} where {}").format(
-                sql.Identifier(self.table),
-                wheres
-            )
+            if filters is None:
+                query = sql.SQL("select * from {}").format(
+                    sql.Identifier(self.table)
+                )
+                self.cursor.execute(query)
+            else:
+                query = sql.SQL("select * from {} where {}").format(
+                    sql.Identifier(self.table),
+                    DBQuery.attribute_equals_value(filters)
+                )
+                self.cursor.execute(query, filters.values())
         else:
-            query = sql.SQL("select {} from {} where {}").format(
-                sql.SQL(', ').join(map(sql.Identifier, fields)),
-                sql.Identifier(self.table),
-                wheres
-            )
-        self.cursor.execute(query, filters.values())
+            if filters is None:
+                query = sql.SQL("select {} from {}").format(
+                    sql.SQL(', ').join(map(sql.Identifier, fields)),
+                    sql.Identifier(self.table),
+                )
+                self.cursor.execute(query)
+            else:
+                query = sql.SQL("select {} from {} where {}").format(
+                    sql.SQL(', ').join(map(sql.Identifier, fields)),
+                    sql.Identifier(self.table),
+                    DBQuery.attribute_equals_value(filters)
+                )
+                self.cursor.execute(query, filters.values())
         return self.cursor.fetchall()
 
     def count(self):
         query = sql.SQL("select count(*) from {}").format(sql.Identifier(self.table))
         self.cursor.execute(query)
         return self.cursor.fetchone()['count']
+
+    def raw(self, query, fetch=False):
+        self.cursor.execute(query)
+        self.connection.commit()
+        if fetch is True:
+            return self.cursor.fetchall()

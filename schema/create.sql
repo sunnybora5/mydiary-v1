@@ -1,4 +1,4 @@
-create table entries(
+create table if not exists entries(
   id serial not null primary key,
   title varchar not null,
   body text not null,
@@ -6,7 +6,7 @@ create table entries(
   updated_at timestamp default current_timestamp
 );
 
-create table users(
+create table if not exists users(
   id serial not null primary key,
   name varchar not null,
   email varchar not null,

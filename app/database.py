@@ -59,7 +59,7 @@ class DBQuery:
         :param data:
         """
         fields = data.keys()
-        values = data.values()
+        values = list(data.values())
         query = sql.SQL("insert into {} ({}) values ({})").format(
             sql.Identifier(self.table),
             sql.SQL(', ').join(map(sql.Identifier, fields)),
@@ -86,7 +86,7 @@ class DBQuery:
             sets,
             wheres
         )
-        values = data.values() + filters.values()
+        values = list(data.values()) + list(filters.values())
         self.cursor.execute(query, values)
         self.connection.commit()
 
@@ -97,7 +97,7 @@ class DBQuery:
             sql.Identifier(self.table),
             wheres
         )
-        self.cursor.execute(query, filters.values())
+        self.cursor.execute(query, list(filters.values()))
         self.connection.commit()
 
     def select(self, fields, filters=None):
@@ -112,7 +112,7 @@ class DBQuery:
                     sql.Identifier(self.table),
                     DBQuery.attribute_equals_value(filters)
                 )
-                self.cursor.execute(query, filters.values())
+                self.cursor.execute(query, list(filters.values()))
         else:
             if filters is None:
                 query = sql.SQL("select {} from {}").format(
@@ -126,7 +126,7 @@ class DBQuery:
                     sql.Identifier(self.table),
                     DBQuery.attribute_equals_value(filters)
                 )
-                self.cursor.execute(query, filters.values())
+                self.cursor.execute(query, list(filters.values()))
         return self.cursor.fetchall()
 
     def count(self):

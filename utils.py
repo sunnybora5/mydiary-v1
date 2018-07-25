@@ -1,10 +1,13 @@
-from os.path import dirname
+import os
 from datetime import datetime
+from dotenv import load_dotenv, find_dotenv
+env_path = find_dotenv()
+load_dotenv(dotenv_path=env_path, verbose=True)
 
 NOT_FOUND_MSG = 'Not found.'
 SERVER_ERROR_MSG = 'Internal server error.'
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
-ROOT_DIRECTORY = dirname(__file__)
+ROOT_DIRECTORY = os.path.split(env_path)[0]
 
 
 def full_path(path=None):

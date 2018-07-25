@@ -6,20 +6,23 @@ class DBConnection:
     def __init__(self):
         pass
 
-    __host = env('DB_HOST')
-    __user = env('DB_USER')
-    __name = env('DB_NAME')
-    __password = env('DB_PASSWORD')
-
     __connection = None
 
     @staticmethod
-    def get():
+    def __get_connection():
         if DBConnection.__connection is None:
+            host = env('DB_HOST')
+            user = env('DB_USER')
+            name = env('DB_NAME')
+            password = env('DB_PASSWORD')
             DBConnection.__connection = psycopg2.connect(
-                host=DBConnection.__host,
-                user=DBConnection.__user,
-                password=DBConnection.__password,
-                dbname=DBConnection.__name
+                host=host,
+                user=user,
+                password=password,
+                dbname=name
             )
         return DBConnection.__connection
+
+    @staticmethod
+    def get():
+        return DBConnection.__get_connection()

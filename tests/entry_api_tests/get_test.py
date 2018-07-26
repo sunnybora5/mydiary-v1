@@ -5,7 +5,7 @@ from tests.entry_api_tests.base_test import BaseTestCase
 class GetTestCase(BaseTestCase):
 
     def test_it_gets_a_specific_entry(self):
-        records = self.db.create(10, select=['title', 'body'])
+        records = self.db.create(4, select=['title', 'body'])
         response = self.get('/api/v1/entries/4')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')

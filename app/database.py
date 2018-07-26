@@ -50,6 +50,9 @@ class DBQuery:
             )
         return sql.SQL(', ').join(aggregate)
 
+    def exists(self, _id):
+        return False if self.get(_id) is None else True
+
     def get(self, _id):
         entry = self.select('*', {'id': _id})
         return entry[0] if len(entry) > 0 else None

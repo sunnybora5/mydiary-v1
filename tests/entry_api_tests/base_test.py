@@ -1,13 +1,14 @@
 import unittest
+from faker import Faker
 from app import app
-from mock import Mock
-from app.models import Entry
+from tests.helpers import DBUtils
 
 
 class BaseTestCase(unittest.TestCase):
 
     def setUp(self):
-        # Get fresh copies of mock entries
-        self.entries = Mock.entries()
-        Entry.set_values(Mock.entries())
+        self.fake = Faker()
+        self.db = DBUtils()
+        self.db.drop_schema()
+        self.db.create_schema()
         self.client = app.test_client(self)

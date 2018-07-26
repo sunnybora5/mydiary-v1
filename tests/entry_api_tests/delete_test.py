@@ -6,6 +6,7 @@ from tests.entry_api_tests.base_test import BaseTestCase
 class DeleteTestCase(BaseTestCase):
 
     def test_it_deletes_entries(self):
+        self.db.create(10)
         response = self.client.delete('/api/v1/entries/2')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')

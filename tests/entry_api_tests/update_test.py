@@ -5,6 +5,7 @@ from tests.entry_api_tests.base_test import BaseTestCase
 
 class UpdateTestCase(BaseTestCase):
     def test_it_updates_entries(self):
+        self.db.create(10)
         updates = {'title': 'A new title', 'body': 'A new body'}
         response = self.client.put('/api/v1/entries/3', data=updates)
         self.assertEqual(response.status_code, 200)
@@ -29,7 +30,7 @@ class UpdateTestCase(BaseTestCase):
         self.assertEqual(errors, json.loads(response.data)['errors'])
 
     def test_fails_when_data_exceeds_max_length(self):
-        long_text = self.entries[0]['body']
+        long_text = self.fake.text(1000)
         long_data = {'title': long_text, 'body': long_text + long_text}
         response = self.client.put('/api/v1/entries/4', data=long_data)
         self.assertEqual(response.status_code, 422)

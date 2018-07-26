@@ -1,3 +1,4 @@
+import bcrypt
 from app.database import DBQuery
 
 
@@ -71,3 +72,44 @@ class Entry:
         Entry.__check(entry_id)
         Entry.__db.delete({'id': entry_id})
         return True
+
+
+class User:
+    __db = DBQuery('users')
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def __hash_password(password):
+        return bcrypt.hashpw(password, bcrypt.gensalt())
+
+    @staticmethod
+    def __check_password(password, hashed):
+        return bcrypt.checkpw(password, hashed)
+
+    @staticmethod
+    def __get_by_email(email):
+        selection = User.__db.select(['password'], {'email': email})
+        return selection[0] if len(selection) > 0 else None
+
+    @staticmethod
+    def create(name, email, password):
+        """
+        Creates an entry and returns a copy.
+        :rtype: dict
+        """
+        if User.__get_by_email(email) is not None:
+            return False
+        return User.__db.insert({
+            'name': name,
+            'email': email,
+            'password': User.__hash_password(password)
+        })
+
+    @staticmethod
+    def check_user(email, password):
+        user = User.__get_by_email(email)
+        if user is not None:
+            return User.__check_password(password, user['password'])
+        return False

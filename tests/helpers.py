@@ -8,7 +8,8 @@ class DBUtils:
     """
     This class allows for easy testing of the database. We must trust it.
     """
-    def __init__(self):
+    def __init__(self, table):
+        self.table = table
         self.fake = Faker()
         self.connection = DBConnection.get()
         self.connection.autocommit = True
@@ -28,15 +29,20 @@ class DBUtils:
         records = []
         for i in range(0, count):
             self.cursor.execute(
-                "insert into entries(title, body) values(%s, %s) returning id",
-                (self.fake.sentence(), self.fake.text())
+                sql.SQL("insert into {} (title, body) values(%s, %s) returning id").format(
+                    sql.Identifier(self.table)
+                ), (self.fake.sentence(), self.fake.text())
             )
             _id = [self.cursor.fetchone()['id']]
             if select == '*':
-                self.cursor.execute("select * from entries where id = %s", _id)
+                self.cursor.execute(sql.SQL("select * from {} where id = {}").format(
+                    sql.Identifier(self.table), sql.Placeholder()
+                ), _id)
             else:
-                self.cursor.execute(sql.SQL("select {} from entries where id = {}").format(
-                    sql.SQL(', ').join(map(sql.Identifier, select)), sql.Placeholder()
+                self.cursor.execute(sql.SQL("select {} from {} where id = {}").format(
+                    sql.SQL(', ').join(map(sql.Identifier, select)),
+                    sql.Identifier(self.table),
+                    sql.Placeholder()
                 ), _id)
             records.append(self.cursor.fetchone())
         return records

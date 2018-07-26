@@ -5,7 +5,7 @@ from app.models import Entry, ModelNotFoundException
 
 class EntryModelTestCase(unittest.TestCase):
     def setUp(self):
-        self.db = DBUtils()
+        self.db = DBUtils('entries')
         self.db.drop_schema()
         self.db.create_schema()
 

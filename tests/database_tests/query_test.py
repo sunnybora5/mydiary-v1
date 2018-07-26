@@ -9,7 +9,7 @@ class QueryTestCase(unittest.TestCase):
     def setUp(self):
         self.table = 'entries'
         self.query = DBQuery(self.table)
-        self.db = DBUtils()
+        self.db = DBUtils('entries')
         self.db.drop_schema()
         self.db.create_schema()
 

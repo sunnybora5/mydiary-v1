@@ -6,7 +6,6 @@ from app.models import Entry, ModelNotFoundException
 class EntryModelTestCase(unittest.TestCase):
     def setUp(self):
         self.db = DBUtils('entries')
-        self.db.drop_schema()
         self.db.create_schema()
 
     def test_it_lists_all_entries(self):
@@ -62,3 +61,6 @@ class EntryModelTestCase(unittest.TestCase):
         Entry.delete(2)
         count_after = Entry.count()
         self.assertEqual(count_after, count_before - 1)
+
+    def tearDown(self):
+        self.db.drop_schema()

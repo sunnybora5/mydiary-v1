@@ -10,7 +10,6 @@ class QueryTestCase(unittest.TestCase):
         self.table = 'entries'
         self.query = DBQuery(self.table)
         self.db = DBUtils('entries')
-        self.db.drop_schema()
         self.db.create_schema()
 
     def test_it_inserts_records(self):
@@ -42,3 +41,6 @@ class QueryTestCase(unittest.TestCase):
         self.query.update({'title': 'Tile', 'body': 'Body'}, {'id': record['id']})
         updated = self.query.select('*', {'id': record['id']})[0]
         self.assertGreater(updated['updated_at'], record['updated_at'])
+
+    def tearDown(self):
+        self.db.drop_schema()

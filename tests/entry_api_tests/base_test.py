@@ -9,7 +9,6 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self.fake = Faker()
         self.db = DBUtils('entries')
-        self.db.drop_schema()
         self.db.create_schema()
         self.client = app.test_client(self)
         self.token = auth_token()
@@ -25,3 +24,6 @@ class BaseTestCase(unittest.TestCase):
 
     def delete(self, url):
         return self.client.delete(url, headers={'x-access-token': self.token})
+
+    def tearDown(self):
+        self.db.drop_schema()

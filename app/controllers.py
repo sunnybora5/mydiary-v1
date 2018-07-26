@@ -1,8 +1,8 @@
 import jwt
-import datetime
+from functools import wraps
 from flask import jsonify, request
 from app.models import Entry, User
-from app.request import validate
+from app.request import validate, auth
 from utils import env
 
 
@@ -56,26 +56,49 @@ class UserController:
 
     @staticmethod
     def login():
-        auth = request.authorization
+        _auth = request.authorization
         # check that username(email in this case) and password are provided.
-        if not auth or not auth.username or not auth.password:
+        if not _auth or not _auth.username or not _auth.password:
             message = {'error': 'Login required.'}
         else:
             # check that the user actually exists
-            user = User.get_by_email(auth.username)
+            user = User.get_by_email(_auth.username)
 
             if user:
                 # check the user credentials
-                if User.check(auth.username, auth.password):
-                    # token payload
-                    payload = {
-                        'user': user['email'],
-                        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=int(env('SESSION_LIFETIME')))
-                    }
+                if User.check(_auth.username, _auth.password):
                     # generate jwt token
-                    token = jwt.encode(payload, env('APP_KEY'))
+                    token = User.generate_token(user)
                     # return token
                     return jsonify({'token': token.decode('UTF-8')}), 200
             # the user gave invalid credentials
             message = {'error': 'Invalid login.'}
         return jsonify(message), 401
+
+    @staticmethod
+    def check_auth(f):
+        """
+        This is a decorator method to wrap routes
+        that require authentication.
+        :param f:
+        :return:
+        """
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            token = None
+
+            if 'x-access-token' in request.headers:
+                token = request.headers['x-access-token']
+
+            if not token:
+                return jsonify({'error': 'Authentication is required.'}), 401
+
+            try:
+                data = jwt.decode(token, env('APP_KEY'))
+                auth.set(data['user'])
+            except:
+                return jsonify({'error': 'Invalid access token.'}), 401
+
+            return f(*args, **kwargs)
+
+        return decorated

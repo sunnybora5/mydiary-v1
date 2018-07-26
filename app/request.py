@@ -1,4 +1,5 @@
 import re
+from app.models import User
 
 
 class ValidationException(Exception):
@@ -216,3 +217,29 @@ class Validator:
 
 def validate(request, rules):
     return Validator(request, rules).validate()
+
+
+class Auth:
+    __email = None
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def set(email):
+        Auth.__email = email
+
+    @staticmethod
+    def id():
+        return Auth.user()['id']
+
+    @staticmethod
+    def email():
+        return Auth.__email
+
+    @staticmethod
+    def user():
+        return User.get_by_email(Auth.__email)
+
+
+auth = Auth

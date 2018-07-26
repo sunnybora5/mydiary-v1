@@ -6,7 +6,7 @@ class GetTestCase(BaseTestCase):
 
     def test_it_gets_a_specific_entry(self):
         records = self.db.create(10, select=['title', 'body'])
-        response = self.client.get('/api/v1/entries/4')
+        response = self.get('/api/v1/entries/4')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')
         # The third index of records has id == 4

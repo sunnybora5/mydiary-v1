@@ -11,32 +11,38 @@ app = Flask(__name__)
 # Define API endpoints
 # Entry resource routes
 @app.route('/api/v1/entries')
+@UserController.check_auth
 def all_entries():
     return EntryController.all()
 
 
 @app.route('/api/v1/entries/<int:entry_id>')
+@UserController.check_auth
 def get(entry_id):
     return EntryController.get(entry_id)
 
 
 @app.route('/api/v1/entries', methods=['POST'])
+@UserController.check_auth
 def create():
     return EntryController.create()
 
 
 @app.route('/api/v1/entries/<int:entry_id>', methods=['PUT'])
+@UserController.check_auth
 def update(entry_id):
     return EntryController.update(entry_id)
 
 
 @app.route('/api/v1/entries/<int:entry_id>', methods=['DELETE'])
+@UserController.check_auth
 def delete(entry_id):
     return EntryController.delete(entry_id)
 
 
 # Entry stats routes
 @app.route('/api/v1/entries/stats/count', methods=['GET'])
+@UserController.check_auth
 def entry_stat_count():
     return EntryController.count()
 
@@ -59,7 +65,7 @@ def model_not_found(exception):
 
 
 @app.errorhandler(ValidationException)
-def model_not_found(exception):
+def validation_errors(exception):
     return ExceptionHandler.handle(exception)
 
 

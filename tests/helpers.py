@@ -1,6 +1,7 @@
 from psycopg2 import extras, sql
 from faker import Faker
 from app.database import DBConnection
+from app.models import User
 from utils import full_path
 
 
@@ -46,3 +47,8 @@ class DBUtils:
                 ), _id)
             records.append(self.cursor.fetchone())
         return records
+
+
+def auth_token():
+    user = User.create('Mutai Mwiti', 'mutaimwiti@code.com', 'secret')
+    return User.generate_token(user)

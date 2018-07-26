@@ -1,4 +1,7 @@
+import jwt
 import bcrypt
+import datetime
+from utils import env
 from app.database import DBQuery
 
 
@@ -113,3 +116,12 @@ class User:
         if user is not None:
             return User.__check_password(password, user['password'])
         return False
+
+    @staticmethod
+    def generate_token(user):
+        # token payload
+        payload = {
+            'user': user['email'],
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=int(env('SESSION_LIFETIME')))
+        }
+        return jwt.encode(payload, env('APP_KEY'))

@@ -1,7 +1,7 @@
 from flask import Flask
 from app.handlers import ExceptionHandler, HttpHandler
 from app.models import ModelNotFoundException
-from app.controllers import EntryController
+from app.controllers import EntryController, UserController
 from app.request import ValidationException
 
 # Create flask app
@@ -39,6 +39,17 @@ def delete(entry_id):
 @app.route('/api/v1/entries/stats/count', methods=['GET'])
 def entry_stat_count():
     return EntryController.count()
+
+
+# User routes
+@app.route('/api/v1/signup', methods=['POST'])
+def signup():
+    return UserController.signup()
+
+
+@app.route('/api/v1/login')
+def login():
+    return UserController.login()
 
 
 # Define API error handlers

@@ -36,3 +36,18 @@ class EntryController:
     def delete(entry_id):
         Entry.delete(entry_id)
         return jsonify({'message': 'Entry deleted.'}), 200
+
+
+class UserController:
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def signup():
+        # create a new user
+        return jsonify({'message': 'Signup is not implemented.'})
+
+    @staticmethod
+    def login():
+        # generate and return token if user has
+        return jsonify({'message': 'Log in is not implemented.'})

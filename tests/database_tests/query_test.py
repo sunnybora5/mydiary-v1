@@ -1,4 +1,5 @@
 import unittest
+from time import sleep
 from utils import full_path
 from app.database import DBQuery, DBConnection
 
@@ -46,3 +47,11 @@ class QueryTestCase(unittest.TestCase):
         self.assertEqual(0, self.query.count())
         self.create(5)
         self.assertEqual(5, self.query.count())
+
+    def test_updated_at_column_is_updated(self):
+        self.create(10)
+        record = self.query.select('*', {'id': self.random()['id']})[0]
+        sleep(0.5)  # delay for 500ms before update
+        self.query.update({'title': 'Tile', 'body': 'Body'}, {'id': record['id']})
+        updated = self.query.select('*', {'id': record['id']})[0]
+        self.assertGreater(updated['updated_at'], record['updated_at'])

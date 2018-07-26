@@ -1,3 +1,6 @@
+import re
+
+
 class ValidationException(Exception):
     """
     This is a custom exception thrown when validation
@@ -103,6 +106,19 @@ class Validator:
                 return True
         except TypeError:
             return Validator.INVALID_TYPE_MSG
+
+    def email(self, field):
+        """
+        Validates a field against an email regex.
+        :param field:
+        :rtype bool | string
+        """
+        # This is a complex regular expression. Credit to http://emailregex.com/
+        value = self.value(field)
+        if re.match(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", value):
+            return True
+        else:
+            return '[' + value + '] is not a valid email address.'
 
     def fields(self):
         """

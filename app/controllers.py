@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from app.models import Entry
+from app.models import Entry, User
 from app.request import validate
 
 
@@ -45,7 +45,11 @@ class UserController:
     @staticmethod
     def signup():
         # create a new user
-        return jsonify({'message': 'Signup is not implemented.'})
+        validate(request.form, {'name': 'required', 'email': 'required|email', 'password': 'required|min:6'})
+        created = User.create(request.form['name'], request.form['email'], request.form['password'])
+        if created is False:
+            return jsonify({'message': 'A user with the same email address exists.'}), 409
+        return jsonify({'name': created['name'], 'email': created['email']}), 201
 
     @staticmethod
     def login():

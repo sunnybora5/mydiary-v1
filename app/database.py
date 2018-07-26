@@ -1,6 +1,4 @@
-import psycopg2
-from psycopg2 import sql
-import psycopg2.extras
+from psycopg2 import connect, sql, extras
 from utils import env
 
 
@@ -17,7 +15,7 @@ class DBConnection:
             user = env('DB_USER')
             name = env('DB_NAME')
             password = env('DB_PASSWORD')
-            DBConnection.__connection = psycopg2.connect(
+            DBConnection.__connection = connect(
                 host=host,
                 user=user,
                 password=password,
@@ -34,7 +32,8 @@ class DBQuery:
     def __init__(self, table):
         self.table = table
         self.connection = DBConnection.get()
-        self.cursor = self.connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        self.connection.autocommit = True
+        self.cursor = self.connection.cursor(cursor_factory=extras.RealDictCursor)
 
     @staticmethod
     def attribute_equals_value(attributes):
@@ -66,7 +65,6 @@ class DBQuery:
             sql.SQL(', ').join(sql.Placeholder() * len(fields))
         )
         self.cursor.execute(query, values)
-        self.connection.commit()
 
     def update(self, data, filters):
         """
@@ -86,18 +84,30 @@ class DBQuery:
         )
         values = list(data.values()) + list(filters.values())
         self.cursor.execute(query, values)
-        self.connection.commit()
 
     def delete(self, filters):
+        """
+        filters is a dictionary containing field:value. It specifies
+        the filtering criteria. Example: {'id': 4}
+        :param filters: dict
+        """
         # delete from table where condition
         query = sql.SQL("delete from {} where {}").format(
             sql.Identifier(self.table),
             DBQuery.attribute_equals_value(filters)
         )
         self.cursor.execute(query, list(filters.values()))
-        self.connection.commit()
 
     def select(self, fields, filters=None):
+        """
+        fields is a list specifying the fields to query e.g. ['id', 'name'].
+        It can also be a sting in the special case of querying all i.e. '*'.
+        filters is a dictionary specifying the filtering that will be
+        applied in the query e.g {'name' = 'Sir'}.
+        :param fields: list or str
+        :param filters: dict
+        :return: list
+        """
         if fields is '*':
             if filters is None:
                 query = sql.SQL("select * from {}").format(
@@ -127,6 +137,10 @@ class DBQuery:
         return self.cursor.fetchall()
 
     def count(self):
+        """
+        Gets the row count for the table.
+        :return: int
+        """
         query = sql.SQL("select count(*) from {}").format(sql.Identifier(self.table))
         self.cursor.execute(query)
         return self.cursor.fetchone()['count']

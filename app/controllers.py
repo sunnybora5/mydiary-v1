@@ -49,7 +49,7 @@ class UserController:
         created = User.create(request.form['name'], request.form['email'], request.form['password'])
         if created is False:
             return jsonify({'message': 'A user with the same email address exists.'}), 409
-        return jsonify({'name': created['name'], 'email': created['email']}), 201
+        return jsonify({'message': 'User created.'}), 201
 
     @staticmethod
     def login():

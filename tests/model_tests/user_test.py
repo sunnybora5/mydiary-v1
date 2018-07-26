@@ -24,6 +24,6 @@ class EntryModelTestCase(unittest.TestCase):
         # create user
         User.create('Mutai Mwiti', email, password)
         # test with valid credentials
-        self.assertTrue(User.check_user(email, password))
+        self.assertTrue(User.check(email, password))
         # test with invalid credentials
-        self.assertFalse(User.check_user(email, 'wrong password'))
+        self.assertFalse(User.check(email, 'wrong password'))

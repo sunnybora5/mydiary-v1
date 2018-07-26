@@ -89,8 +89,8 @@ class User:
         return bcrypt.checkpw(password, hashed)
 
     @staticmethod
-    def __get_by_email(email):
-        selection = User.__db.select(['password'], {'email': email})
+    def get_by_email(email):
+        selection = User.__db.select('*', {'email': email})
         return selection[0] if len(selection) > 0 else None
 
     @staticmethod
@@ -99,7 +99,7 @@ class User:
         Creates an entry and returns a copy.
         :rtype: dict
         """
-        if User.__get_by_email(email) is not None:
+        if User.get_by_email(email) is not None:
             return False
         return User.__db.insert({
             'name': name,
@@ -108,8 +108,8 @@ class User:
         })
 
     @staticmethod
-    def check_user(email, password):
-        user = User.__get_by_email(email)
+    def check(email, password):
+        user = User.get_by_email(email)
         if user is not None:
             return User.__check_password(password, user['password'])
         return False

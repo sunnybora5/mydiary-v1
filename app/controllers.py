@@ -1,6 +1,9 @@
+import jwt
+import datetime
 from flask import jsonify, request
 from app.models import Entry, User
 from app.request import validate
+from utils import env
 
 
 class EntryController:
@@ -53,5 +56,26 @@ class UserController:
 
     @staticmethod
     def login():
-        # generate and return token if user has
-        return jsonify({'message': 'Log in is not implemented.'})
+        auth = request.authorization
+        # check that username(email in this case) and password are provided.
+        if not auth or not auth.username or not auth.password:
+            message = {'error': 'Login required.'}
+        else:
+            # check that the user actually exists
+            user = User.get_by_email(auth.username)
+
+            if user:
+                # check the user credentials
+                if User.check(auth.username, auth.password):
+                    # token payload
+                    payload = {
+                        'user': user['email'],
+                        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=int(env('SESSION_LIFETIME')))
+                    }
+                    # generate jwt token
+                    token = jwt.encode(payload, env('APP_KEY'))
+                    # return token
+                    return jsonify({'token': token.decode('UTF-8')}), 200
+            # the user gave invalid credentials
+            message = {'error': 'Invalid login.'}
+        return jsonify(message), 401

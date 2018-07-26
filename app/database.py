@@ -50,6 +50,10 @@ class DBQuery:
             )
         return sql.SQL(', ').join(aggregate)
 
+    def get(self, _id):
+        entry = self.select('*', {'id': _id})
+        return entry[0] if len(entry) > 0 else None
+
     def insert(self, data):
         """
         data is a dictionary containing field:value.
@@ -59,12 +63,14 @@ class DBQuery:
         """
         fields = data.keys()
         values = list(data.values())
-        query = sql.SQL("insert into {} ({}) values ({})").format(
+        query = sql.SQL("insert into {} ({}) values ({}) returning id").format(
             sql.Identifier(self.table),
             sql.SQL(', ').join(map(sql.Identifier, fields)),
             sql.SQL(', ').join(sql.Placeholder() * len(fields))
         )
         self.cursor.execute(query, values)
+        _id = self.cursor.fetchone()['id']
+        return self.get(_id)
 
     def update(self, data, filters):
         """
@@ -77,13 +83,15 @@ class DBQuery:
         :param filters: dict
         :param data: dict
         """
-        query = sql.SQL("update {} set {} where {}").format(
+        query = sql.SQL("update {} set {} where {} returning id").format(
             sql.Identifier(self.table),
             DBQuery.attribute_equals_value(data),
             DBQuery.attribute_equals_value(filters)
         )
         values = list(data.values()) + list(filters.values())
         self.cursor.execute(query, values)
+        _id = self.cursor.fetchone()['id']
+        return self.get(_id)
 
     def delete(self, filters):
         """

@@ -27,15 +27,14 @@ class QueryTestCase(unittest.TestCase):
     # tests
     def test_it_inserts_records(self):
         data = {'title': 'My title', 'body': 'My body'}
-        self.query.insert(data)
-        self.assertTrue(data in self.query.select(['title', 'body']))
+        record = self.query.insert(data)
+        self.assertDictContainsSubset(data, record)
 
     def test_it_updates_records(self):
         self.create(10)
-        record = self.random()
         data = {'title': 'Updated title', 'body': 'Updated body'}
-        self.query.update(data, {'id': record['id']})
-        self.assertTrue(data in self.query.select(['title', 'body']))
+        updated = self.query.update(data, {'id': self.random()['id']})
+        self.assertDictContainsSubset(data, updated)
 
     def test_it_deletes_records(self):
         self.create(10)

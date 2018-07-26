@@ -69,4 +69,5 @@ class Entry:
         :rtype: bool
         """
         Entry.__check(entry_id)
-        return Entry.__db.delete({'id': entry_id})
+        Entry.__db.delete({'id': entry_id})
+        return True

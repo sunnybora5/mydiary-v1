@@ -26,7 +26,7 @@ class EntryController:
     @staticmethod
     def create():
         validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
-        entry = Entry.create(request.form['title'], request.form['body'])
+        entry = Entry.create(request.form['title'], request.form['body'], auth.id())
         return jsonify({'entry': entry}), 201
 
     @staticmethod

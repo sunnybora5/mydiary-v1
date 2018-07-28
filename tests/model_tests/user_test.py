@@ -5,12 +5,12 @@ from app.models import User
 
 class EntryModelTestCase(unittest.TestCase):
     def setUp(self):
-        self.db = DBUtils('users')
+        self.db = DBUtils()
         self.db.create_schema()
 
     def test_it_creates_user(self):
         name = 'Mutai Mwiti'
-        email = 'mutaimwiti@code.com'
+        email = 'mutaimwiti40@gmail.com'
         # new user
         user = User.create(name, email, 'secret')
         self.assertDictContainsSubset({'name': name, 'email': email}, user)
@@ -18,7 +18,7 @@ class EntryModelTestCase(unittest.TestCase):
         self.assertFalse(User.create(name, email, 'secret'))
 
     def test_it_checks_user_credentials(self):
-        email = 'mutaimwiti@code.com'
+        email = 'mutaimwiti40@gmail.com'
         password = 'secret'
         # create user
         User.create('Mutai Mwiti', email, password)

@@ -43,7 +43,7 @@ class Entry:
         return Entry.__db.get(entry_id)
 
     @staticmethod
-    def create(title, body):
+    def create(title, body, created_by):
         """
         Creates an entry and returns a copy.
         :rtype: dict
@@ -51,6 +51,7 @@ class Entry:
         return Entry.__db.insert({
             'title': title,
             'body': body,
+            'created_by': created_by
         })
 
     @staticmethod

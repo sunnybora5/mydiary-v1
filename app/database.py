@@ -1,4 +1,5 @@
 from psycopg2 import connect, sql, extras
+from sys import modules
 from utils import env
 
 
@@ -11,10 +12,18 @@ class DBConnection:
     @staticmethod
     def __get_connection():
         if DBConnection.__connection is None:
-            host = env('DB_HOST')
-            user = env('DB_USER')
-            name = env('DB_NAME')
-            password = env('DB_PASSWORD')
+            module_keys = modules.keys()
+            # determine whether we are testing
+            if 'pytest' in module_keys or 'nose' in module_keys or env('TESTING') == 'true':
+                host = env('TEST_DB_HOST')
+                user = env('TEST_DB_USER')
+                name = env('TEST_DB_NAME')
+                password = env('TEST_DB_PASSWORD')
+            else:
+                host = env('DB_HOST')
+                user = env('DB_USER')
+                name = env('DB_NAME')
+                password = env('DB_PASSWORD')
             DBConnection.__connection = connect(
                 host=host,
                 user=user,

@@ -22,4 +22,3 @@ def full_path(path=None):
 
 def parse_date(date_string):
     return datetime.strptime(date_string, DATE_FORMAT)
-

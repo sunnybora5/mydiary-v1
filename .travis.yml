@@ -18,8 +18,8 @@ before_script:
   # create a testing database
   - psql -c 'create database mydiary_testing;' -U postgres
 
-  # copy .env.testing to .env in order to have proper db credentials
-  - cp .env.testing .env
+  # copy .env.example to .env in order to have proper db credentials
+  - cp .env.example .env
 
 script:
   # run tests with coverage

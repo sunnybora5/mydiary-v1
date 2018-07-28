@@ -7,9 +7,10 @@ https://coveralls.io/github/mutaimwiti/mydiary-v1?branch=development)
 
 This is v1 of a RESTful API to power MyDiary front-end pages.
 
-The API is implemented using Flask Python Framework. It uses JWT authentication and Postgres database. The API is 
-minimal in usage of programming abstractions with Flask being the only notable one. It implements it's own custom 
-validator and database abstraction layer.
+The API is implemented using Flask Python Framework. 
+
+It uses JWT authentication and Postgres database.  The API is minimal in its use of programming abstractions with Flask 
+being the only notable one. It implements it's own custom validator and database abstraction layer.
 
 #### Requirements
 1. `python3` - [Python](https://www.python.org/)
@@ -58,7 +59,6 @@ Install project dependencies
 `$ pip install -r requirements.txt`
 
 #### Running tests
-##### Requirements
 Create a testing database 
 
 `$ psql -c 'create database <your_testing_database_name>;' -U <postgres_username>`
@@ -72,7 +72,6 @@ Run the tests
 `$ pytest`
 
 #### Running app
-##### Requirements
 Create a production/staging database 
 
 `$ psql -c 'create database <your_database_name>;' -U <postgres_username>`

@@ -19,7 +19,7 @@ class StatsTestCase(BaseTestCase):
         self.assertEqual(new_count, old_count + 1)
 
     def test_entry_count_remains_accurate_after_deletion(self):
-        self.db.create_entry(4)
+        self.db.create_entry(count=4, overrides={'created_by': self.user_id})
         old_count = json.loads(self.get('/api/v1/entries/stats/count').data)['count']
         self.delete('/api/v1/entries/2')
         new_count = json.loads(self.get('/api/v1/entries/stats/count').data)['count']

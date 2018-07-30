@@ -128,8 +128,3 @@ class DBUtils:
         # retrieve just inserted items
         self.cursor.execute(query, item_ids)
         return self.cursor.fetchone() if count == 1 else self.cursor.fetchall()
-
-
-def auth_token():
-    user = User.create('Mutai Mwiti', 'mutaimwiti40@gmail.com', 'secret')
-    return User.generate_token(user)

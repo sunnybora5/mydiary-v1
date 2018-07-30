@@ -1,7 +1,8 @@
 import unittest
 from faker import Faker
 from app import app
-from tests.helpers import DBUtils, auth_token
+from tests.helpers import DBUtils
+from app.models import User
 
 
 class BaseTestCase(unittest.TestCase):
@@ -11,7 +12,9 @@ class BaseTestCase(unittest.TestCase):
         self.db = DBUtils()
         self.db.create_schema()
         self.client = app.test_client(self)
-        self.token = auth_token()
+        user = self.db.create_user()
+        self.user_id = user['id']
+        self.token = User.generate_token(user)
 
     def get(self, url):
         return self.client.get(url, headers={'x-access-token': self.token})

@@ -16,12 +16,13 @@ class EntryController:
 
     @staticmethod
     def all():
-        entries = Entry.all()
+        entries = Entry.all({'created_by': auth.id()})
         return jsonify({'entries': entries, 'count': len(entries)}), 200
 
     @staticmethod
     def get(entry_id):
-        return jsonify({'entry': Entry.get(entry_id)}), 200
+        entry = Entry.get({'id': entry_id, 'created_by': auth.id()})
+        return jsonify({'entry': entry}), 200
 
     @staticmethod
     def create():
@@ -32,12 +33,12 @@ class EntryController:
     @staticmethod
     def update(entry_id):
         validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
-        entry = Entry.update(entry_id, request.form['title'], request.form['body'])
+        entry = Entry.update({'id': entry_id, 'created_by': auth.id()}, request.form['title'], request.form['body'])
         return jsonify({'entry': entry}), 200
 
     @staticmethod
     def delete(entry_id):
-        Entry.delete(entry_id)
+        Entry.delete({'id': entry_id, 'created_by': auth.id()})
         return jsonify({'message': 'Entry deleted.'}), 200
 
 

@@ -15,10 +15,10 @@ class EntryModelTestCase(unittest.TestCase):
     def test_it_gets_a_specific_entry(self):
         self.db.create_entry(4)
         entry = self.db.random_entry()
-        self.assertEqual(entry, Entry.get(entry['id']))
+        self.assertEqual(entry, Entry.get({'id': entry['id']}))
         # Fails for non-existent entries
         with self.assertRaises(ModelNotFoundException):
-            Entry.get(51115)
+            Entry.get({'id': 51115})
 
     def test_it_creates_new_entries(self):
         title = 'A title'
@@ -30,19 +30,19 @@ class EntryModelTestCase(unittest.TestCase):
         self.db.create_entry(10)
         title = 'A new title'
         body = 'A new body'
-        updated_entry = Entry.update(2, title, body)
-        self.assertEqual(updated_entry, Entry.get(2))
+        updated_entry = Entry.update({'id': 2}, title, body)
+        self.assertEqual(updated_entry, Entry.get({'id': 2}))
         self.assertDictContainsSubset({'title': title, 'body': body}, updated_entry)
         # Fails for non-existent entries
         with self.assertRaises(ModelNotFoundException):
-            Entry.update(71115, 'Foo', 'Bar')
+            Entry.update({'id': 71115}, 'Foo', 'Bar')
 
     def test_it_deletes_entries(self):
         self.db.create_entry(4)
-        self.assertTrue(Entry.delete(3))
+        self.assertTrue(Entry.delete({'id': 3}))
         # Fails for non-existent entries
         with self.assertRaises(ModelNotFoundException):
-            Entry.delete(91155)
+            Entry.delete({'id': 91155})
 
     def test_it_gets_entry_count(self):
         self.db.create_entry(6)
@@ -57,7 +57,7 @@ class EntryModelTestCase(unittest.TestCase):
         self.assertEqual(count_after, count_before + 1)
         # when an entry is deleted
         count_before = Entry.count()
-        Entry.delete(2)
+        Entry.delete({'id': 2})
         count_after = Entry.count()
         self.assertEqual(count_after, count_before - 1)
 

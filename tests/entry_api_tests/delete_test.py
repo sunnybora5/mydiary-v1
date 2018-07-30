@@ -6,7 +6,7 @@ from tests.entry_api_tests.base_test import BaseTestCase
 class DeleteTestCase(BaseTestCase):
 
     def test_it_deletes_entries(self):
-        entry_id = self.db.create_entry()['id']
+        entry_id = self.db.create_entry(overrides={'created_by': self.user_id})['id']
         response = self.delete('/api/v1/entries/%s' % str(entry_id))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')

@@ -4,6 +4,7 @@ from tests.entry_api_tests.base_test import BaseTestCase
 
 
 class UpdateTestCase(BaseTestCase):
+
     def test_it_updates_entries(self):
         self.db.create_entry(count=3, overrides={'created_by': self.user_id})
         updates = {'title': 'A new title', 'body': 'A new body'}
@@ -11,6 +12,12 @@ class UpdateTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')
         self.assertDictContainsSubset(updates, json.loads(response.data)['entry'])
+
+    def test_it_only_updates_entries_for_owner(self):
+        self.db.create_entry(count=3)
+        updates = {'title': 'A new title', 'body': 'A new body'}
+        response = self.put('/api/v1/entries/2', data=updates)
+        self.assertEqual(response.status_code, 404)
 
     def test_fails_on_model_not_found(self):
         response = self.delete('/api/v1/entries/81115')

@@ -12,3 +12,8 @@ class ListTestCase(BaseTestCase):
         expected = [{'title': item['title'], 'body': item['body']} for item in records]
         received = [{'title': item['title'], 'body': item['body']} for item in json.loads(response.data)['entries']]
         self.assertEqual(expected, received)
+
+    def test_it_only_returns_entries_for_the_owner(self):
+        self.db.create_entry(3)
+        response = self.get('/api/v1/entries')
+        self.assertEqual(0, json.loads(response.data).get('count'))

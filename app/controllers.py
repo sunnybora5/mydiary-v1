@@ -12,7 +12,8 @@ class EntryController:
 
     @staticmethod
     def count():
-        return jsonify({'count': Entry.count()}), 200
+        entry = Entry.count({'created_by': auth.id()})
+        return jsonify({'count': entry}), 200
 
     @staticmethod
     def all():

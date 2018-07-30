@@ -14,6 +14,11 @@ class DeleteTestCase(BaseTestCase):
         all_entries = json.loads(self.get('/api/v1/entries').data)['entries']
         self.assertFalse(any(entry['id'] == entry_id for entry in all_entries))
 
+    def test_if_fails_when_the_current_user_is_not_the_owner(self):
+        entry_id = self.db.create_entry().get('id')
+        response = self.delete('/api/v1/entries/%s' % str(entry_id))
+        self.assertEqual(response.status_code, 404)
+
     def test_fails_on_model_not_found(self):
         response = self.delete('/api/v1/entries/71115')
         self.assertEqual(response.status_code, 404)

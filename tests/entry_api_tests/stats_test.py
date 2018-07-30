@@ -5,11 +5,16 @@ from tests.entry_api_tests.base_test import BaseTestCase
 class StatsTestCase(BaseTestCase):
 
     def test_it_gets_entry_count_stat(self):
-        self.db.create_entry(3)
+        self.db.create_entry(count=3, overrides={'created_by': self.user_id})
         response = self.get('/api/v1/entries/stats/count')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')
         self.assertEqual(3, json.loads(response.data)['count'])
+
+    def test_it_gets_entry_count_only_for_owner(self):
+        self.db.create_entry(3)
+        response = self.get('/api/v1/entries/stats/count')
+        self.assertEqual(0, json.loads(response.data).get('count'))
 
     def test_entry_count_remains_accurate_after_creation(self):
         data = {'title': 'A title', 'body': 'This is a body'}

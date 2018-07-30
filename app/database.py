@@ -45,7 +45,23 @@ class DBQuery:
         self.cursor = self.connection.cursor(cursor_factory=extras.RealDictCursor)
 
     @staticmethod
-    def attribute_equals_value(attributes):
+    def __x_equals_y_comma_clause(attributes):
+        """
+        An sql generator for a = b, j = k, m = n ...
+        :param attributes:
+        """
+        aggregate = []
+        for item in attributes:
+
+            aggregate.append(
+                sql.SQL("{} = {}").format(
+                    sql.Identifier(item), sql.Placeholder()
+                )
+            )
+        return sql.SQL(', ').join(aggregate)
+
+    @staticmethod
+    def __x_equals_y_and_clause(attributes):
         """
         An sql generator for a = b, j = k, m = n ...
         :param attributes:
@@ -57,13 +73,25 @@ class DBQuery:
                     sql.Identifier(item), sql.Placeholder()
                 )
             )
-        return sql.SQL(', ').join(aggregate)
+        return sql.SQL(' and ').join(aggregate)
 
-    def exists(self, _id):
-        return False if self.get(_id) is None else True
+    def exists(self, filters):
+        """
+        filters is a dictionary specifying the filtering criteria
+        to be applied e.g {'id': 25, created_by' = 10}.
+        :param filters:
+        :return:
+        """
+        return False if self.get(filters) is None else True
 
-    def get(self, _id):
-        entry = self.select('*', {'id': _id})
+    def get(self, filters):
+        """
+        filters is a dictionary specifying the filtering criteria
+        to be applied e.g {'id': 25, created_by' = 10}.
+        :param filters:
+        :return:
+        """
+        entry = self.select('*', filters)
         return entry[0] if len(entry) > 0 else None
 
     def insert(self, data):
@@ -81,8 +109,8 @@ class DBQuery:
             sql.SQL(', ').join(sql.Placeholder() * len(fields))
         )
         self.cursor.execute(query, values)
-        _id = self.cursor.fetchone()['id']
-        return self.get(_id)
+        item_id = self.cursor.fetchone().get('id')
+        return self.get({'id': item_id})
 
     def update(self, data, filters):
         """
@@ -97,13 +125,13 @@ class DBQuery:
         """
         query = sql.SQL("update {} set {} where {} returning id").format(
             sql.Identifier(self.table),
-            DBQuery.attribute_equals_value(data),
-            DBQuery.attribute_equals_value(filters)
+            DBQuery.__x_equals_y_comma_clause(data),
+            DBQuery.__x_equals_y_and_clause(filters)
         )
         values = list(data.values()) + list(filters.values())
         self.cursor.execute(query, values)
-        _id = self.cursor.fetchone()['id']
-        return self.get(_id)
+        item_id = self.cursor.fetchone().get('id')
+        return self.get({'id': item_id})
 
     def delete(self, filters):
         """
@@ -114,7 +142,7 @@ class DBQuery:
         # delete from table where condition
         query = sql.SQL("delete from {} where {}").format(
             sql.Identifier(self.table),
-            DBQuery.attribute_equals_value(filters)
+            DBQuery.__x_equals_y_and_clause(filters)
         )
         self.cursor.execute(query, list(filters.values()))
 
@@ -137,7 +165,7 @@ class DBQuery:
             else:
                 query = sql.SQL("select * from {} where {}").format(
                     sql.Identifier(self.table),
-                    DBQuery.attribute_equals_value(filters)
+                    DBQuery.__x_equals_y_and_clause(filters)
                 )
                 self.cursor.execute(query, list(filters.values()))
         else:
@@ -151,19 +179,26 @@ class DBQuery:
                 query = sql.SQL("select {} from {} where {}").format(
                     sql.SQL(', ').join(map(sql.Identifier, fields)),
                     sql.Identifier(self.table),
-                    DBQuery.attribute_equals_value(filters)
+                    DBQuery.__x_equals_y_and_clause(filters)
                 )
                 self.cursor.execute(query, list(filters.values()))
         return self.cursor.fetchall()
 
-    def count(self):
+    def count(self, filters=None):
         """
         Gets the row count for the table.
         :return: int
         """
-        query = sql.SQL("select count(*) from {}").format(sql.Identifier(self.table))
-        self.cursor.execute(query)
-        return self.cursor.fetchone()['count']
+        if filters is None:
+            query = sql.SQL("select count(*) from {}").format(sql.Identifier(self.table))
+            self.cursor.execute(query)
+        else:
+            query = sql.SQL("select count(*) from {} where {}").format(
+                sql.Identifier(self.table),
+                DBQuery.__x_equals_y_and_clause(filters)
+            )
+            self.cursor.execute(query, list(filters.values()))
+        return self.cursor.fetchone().get('count')
 
     def raw(self, query, fetch=False):
         self.cursor.execute(query)

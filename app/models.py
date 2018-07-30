@@ -16,31 +16,31 @@ class Entry:
         pass
 
     @staticmethod
-    def __check(entry_id):
-        if Entry.__db.exists(entry_id) is False:
+    def __check(filters):
+        if Entry.__db.exists(filters) is False:
             raise ModelNotFoundException
 
     @staticmethod
-    def count():
-        return Entry.__db.count()
+    def count(filters=None):
+        return Entry.__db.count(filters)
 
     @staticmethod
-    def all():
+    def all(filters=None):
         """
         Returns all the entries.
         :rtype: list
         """
-        return Entry.__db.select('*')
+        return Entry.__db.select('*', filters)
 
     @staticmethod
-    def get(entry_id):
+    def get(filters):
         """
         Returns the specified entry.
-        :param entry_id:
+        :param filters:
         :rtype: dict or None
         """
-        Entry.__check(entry_id)
-        return Entry.__db.get(entry_id)
+        Entry.__check(filters)
+        return Entry.__db.get(filters)
 
     @staticmethod
     def create(title, body, created_by):
@@ -55,26 +55,26 @@ class Entry:
         })
 
     @staticmethod
-    def update(entry_id, title, body):
+    def update(filters, title, body):
         """
         Updates the specified entry.
-        :param entry_id:
+        :param filters:
         :param title:
         :param body:
         :rtype: dict
         """
-        Entry.__check(entry_id)
-        return Entry.__db.update({'title': title, 'body': body}, {'id': entry_id})
+        Entry.__check(filters)
+        return Entry.__db.update({'title': title, 'body': body}, filters)
 
     @staticmethod
-    def delete(entry_id):
+    def delete(filters):
         """
         Deletes the specified entry.
-        :param entry_id:
+        :param filters:
         :rtype: bool
         """
-        Entry.__check(entry_id)
-        Entry.__db.delete({'id': entry_id})
+        Entry.__check(filters)
+        Entry.__db.delete(filters)
         return True
 
 
@@ -122,7 +122,7 @@ class User:
     def generate_token(user):
         # token payload
         payload = {
-            'user': user['email'],
+            'user': user.get('email'),
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=int(env('SESSION_LIFETIME')))
         }
         return jwt.encode(payload, env('APP_KEY'))

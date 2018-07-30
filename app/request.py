@@ -231,7 +231,7 @@ class Auth:
 
     @staticmethod
     def id():
-        return Auth.user()['id']
+        return Auth.user().get('id')
 
     @staticmethod
     def email():

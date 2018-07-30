@@ -11,7 +11,7 @@ class UpdateTestCase(BaseTestCase):
         response = self.put('/api/v1/entries/2', data=updates)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')
-        self.assertDictContainsSubset(updates, json.loads(response.data)['entry'])
+        self.assertDictContainsSubset(updates, json.loads(response.data).get('entry'))
 
     def test_it_only_updates_entries_for_owner(self):
         self.db.create_entry(count=3)
@@ -34,7 +34,7 @@ class UpdateTestCase(BaseTestCase):
             'title': ['The title field must have a minimum length of 5.'],
             'body': ['The body field must have a minimum length of 10.'],
         }
-        self.assertEqual(errors, json.loads(response.data)['errors'])
+        self.assertEqual(errors, json.loads(response.data).get('errors'))
 
     def test_fails_when_data_exceeds_max_length(self):
         long_text = self.fake.text(1000)
@@ -46,7 +46,7 @@ class UpdateTestCase(BaseTestCase):
             'title': ['The title field must have a maximum length of 255.'],
             'body': ['The body field must have a maximum length of 1000.'],
         }
-        self.assertEqual(errors, json.loads(response.data)['errors'])
+        self.assertEqual(errors, json.loads(response.data).get('errors'))
 
     def test_fails_when_data_is_missing(self):
         response = self.put('/api/v1/entries/4', data={})
@@ -56,4 +56,4 @@ class UpdateTestCase(BaseTestCase):
             'title': ['The title field is required.'],
             'body': ['The body field is required.'],
         }
-        self.assertEqual(errors, json.loads(response.data)['errors'])
+        self.assertEqual(errors, json.loads(response.data).get('errors'))

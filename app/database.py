@@ -109,7 +109,7 @@ class DBQuery:
             sql.SQL(', ').join(sql.Placeholder() * len(fields))
         )
         self.cursor.execute(query, values)
-        item_id = self.cursor.fetchone()['id']
+        item_id = self.cursor.fetchone().get('id')
         return self.get({'id': item_id})
 
     def update(self, data, filters):
@@ -130,7 +130,7 @@ class DBQuery:
         )
         values = list(data.values()) + list(filters.values())
         self.cursor.execute(query, values)
-        item_id = self.cursor.fetchone()['id']
+        item_id = self.cursor.fetchone().get('id')
         return self.get({'id': item_id})
 
     def delete(self, filters):
@@ -198,7 +198,7 @@ class DBQuery:
                 DBQuery.__x_equals_y_and_clause(filters)
             )
             self.cursor.execute(query, list(filters.values()))
-        return self.cursor.fetchone()['count']
+        return self.cursor.fetchone().get('count')
 
     def raw(self, query, fetch=False):
         self.cursor.execute(query)

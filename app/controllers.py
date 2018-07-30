@@ -28,13 +28,17 @@ class EntryController:
     @staticmethod
     def create():
         validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
-        entry = Entry.create(request.form['title'], request.form['body'], auth.id())
+        entry = Entry.create(request.form.get('title'), request.form.get('body'), auth.id())
         return jsonify({'entry': entry}), 201
 
     @staticmethod
     def update(entry_id):
         validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
-        entry = Entry.update({'id': entry_id, 'created_by': auth.id()}, request.form['title'], request.form['body'])
+        entry = Entry.update(
+            {'id': entry_id, 'created_by': auth.id()},
+            request.form.get('title'),
+            request.form.get('body')
+        )
         return jsonify({'entry': entry}), 200
 
     @staticmethod
@@ -51,7 +55,7 @@ class UserController:
     def signup():
         # create a new user
         validate(request.form, {'name': 'required', 'email': 'required|email', 'password': 'required|min:6'})
-        created = User.create(request.form['name'], request.form['email'], request.form['password'])
+        created = User.create(request.form.get('name'), request.form.get('email'), request.form.get('password'))
         if created is False:
             return jsonify({'message': 'A user with the same email address exists.'}), 409
         return jsonify({'message': 'User created.'}), 201
@@ -90,14 +94,14 @@ class UserController:
             token = None
 
             if 'x-access-token' in request.headers:
-                token = request.headers['x-access-token']
+                token = request.headers.get('x-access-token')
 
             if not token:
                 return jsonify({'error': 'Authentication is required.'}), 401
 
             try:
                 data = jwt.decode(token, env('APP_KEY'))
-                auth.set(data['user'])
+                auth.set(data.get('user'))
             except:
                 return jsonify({'error': 'Invalid access token.'}), 401
 

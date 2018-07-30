@@ -11,9 +11,9 @@ class BaseTestCase(unittest.TestCase):
         self.fake = Faker()
         self.db = DBUtils()
         self.db.create_schema()
-        self.client = app.test_client(self)
         user = self.db.create_user()
-        self.user_id = user['id']
+        self.user_id = user.get('id')
+        self.client = app.test_client(self)
         self.token = User.generate_token(user)
 
     def get(self, url):

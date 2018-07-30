@@ -15,7 +15,7 @@ class EntryModelTestCase(unittest.TestCase):
     def test_it_gets_a_specific_entry(self):
         self.db.create_entry(4)
         entry = self.db.random_entry()
-        self.assertEqual(entry, Entry.get({'id': entry['id']}))
+        self.assertEqual(entry, Entry.get({'id': entry.get('id')}))
         # Fails for non-existent entries
         with self.assertRaises(ModelNotFoundException):
             Entry.get({'id': 51115})
@@ -23,7 +23,7 @@ class EntryModelTestCase(unittest.TestCase):
     def test_it_creates_new_entries(self):
         title = 'A title'
         body = 'A body'
-        new_entry = Entry.create(title, body, self.db.create_user()['id'])
+        new_entry = Entry.create(title, body, self.db.create_user().get('id'))
         self.assertDictContainsSubset({'title': title, 'body': body}, new_entry)
 
     def test_it_updates_entries(self):
@@ -52,7 +52,7 @@ class EntryModelTestCase(unittest.TestCase):
         self.db.create_entry(5)
         # when new entry is created
         count_before = Entry.count()
-        Entry.create('A title', 'A body', self.db.create_user()['id'])
+        Entry.create('A title', 'A body', self.db.create_user().get('id'))
         count_after = Entry.count()
         self.assertEqual(count_after, count_before + 1)
         # when an entry is deleted

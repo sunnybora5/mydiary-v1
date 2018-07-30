@@ -48,9 +48,9 @@ class DBUtils:
         for i in range(0, count):
             users.append(
                 {
-                    'name': overrides['name'] if 'name' in override_fields else self.fake.name(),
-                    'email': overrides['email'] if 'email' in override_fields else self.fake.email(),
-                    'password': overrides['password'] if 'password' in override_fields else self.fake.password()
+                    'name': overrides.get('name') if 'name' in override_fields else self.fake.name(),
+                    'email': overrides.get('email') if 'email' in override_fields else self.fake.email(),
+                    'password': overrides.get('password') if 'password' in override_fields else self.fake.password()
                 }
             )
         return users[0] if count == 1 else users
@@ -68,9 +68,10 @@ class DBUtils:
         entries = []
         for i in range(0, count):
             entries.append({
-                'title': overrides['title'] if 'title' in override_fields else self.fake.name(),
-                'body': overrides['body'] if 'body' in override_fields else self.fake.email(),
-                'created_by': overrides['created_by'] if 'created_by' in override_fields else self.create_user()['id']
+                'title': overrides.get('title') if 'title' in override_fields else self.fake.name(),
+                'body': overrides.get('body') if 'body' in override_fields else self.fake.email(),
+                'created_by':
+                    overrides.get('created_by') if 'created_by' in override_fields else self.create_user().get('id')
             })
         return entries[0] if count == 1 else entries
 
@@ -119,7 +120,7 @@ class DBUtils:
             # insert item
             self.cursor.execute(query, random_values)
             # get id of inserted item
-            item_ids.append(self.cursor.fetchone()['id'])
+            item_ids.append(self.cursor.fetchone().get('id'))
         # build query to retrieve just inserted item
         query = sql.SQL("select * from {} where id in ({})").format(
             sql.Identifier(table),

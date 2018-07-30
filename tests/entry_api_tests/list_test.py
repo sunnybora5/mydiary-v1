@@ -9,8 +9,12 @@ class ListTestCase(BaseTestCase):
         response = self.get('/api/v1/entries')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.mimetype, 'application/json')
-        expected = [{'title': item['title'], 'body': item['body']} for item in records]
-        received = [{'title': item['title'], 'body': item['body']} for item in json.loads(response.data)['entries']]
+        expected = [
+            {'title': item.get('title'), 'body': item.get('body')} for item in records
+        ]
+        received = [
+            {'title': item.get('title'), 'body': item.get('body')} for item in json.loads(response.data).get('entries')
+        ]
         self.assertEqual(expected, received)
 
     def test_it_only_returns_entries_for_the_owner(self):

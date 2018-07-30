@@ -122,7 +122,7 @@ class User:
     def generate_token(user):
         # token payload
         payload = {
-            'user': user['email'],
+            'user': user.get('email'),
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=int(env('SESSION_LIFETIME')))
         }
         return jwt.encode(payload, env('APP_KEY'))

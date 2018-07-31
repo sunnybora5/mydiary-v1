@@ -17,6 +17,11 @@ class ListTestCase(BaseTestCase):
         ]
         self.assertEqual(expected, received)
 
+    def test_it_allows_trailing_trash(self):
+        self.db.create_entry(count=3, overrides={'created_by': self.user_id})
+        response = self.get('/api/v1/entries/')
+        self.assertEqual(response.status_code, 200)
+
     def test_it_only_returns_entries_for_the_owner(self):
         self.db.create_entry(3)
         response = self.get('/api/v1/entries')

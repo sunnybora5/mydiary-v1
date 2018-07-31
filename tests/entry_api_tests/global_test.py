@@ -6,7 +6,7 @@ class GlobalTestCase(BaseTestCase):
     def test_invalid_urls_trigger_not_found(self):
         responses = []
         data = {'title': 'A title', 'body': 'A body'}
-        urls = ['/gibberish', '/api/v1/entries/', '/api/v1/entries/x']
+        urls = ['/foo', '/api/v1/foo', '/api/v1/entries/foo']
         for url in urls:
             responses.append(self.get(url))
             responses.append(self.post(url, data=data))

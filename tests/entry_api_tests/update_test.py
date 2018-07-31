@@ -13,6 +13,11 @@ class UpdateTestCase(BaseTestCase):
         self.assertEqual(response.mimetype, 'application/json')
         self.assertDictContainsSubset(updates, json.loads(response.data).get('entry'))
 
+    def test_it_allows_trailing_trash(self):
+        self.db.create_entry(count=3, overrides={'created_by': self.user_id})
+        response = self.put('/api/v1/entries/2/', data={'title': 'A new title', 'body': 'A new body'})
+        self.assertEqual(response.status_code, 200)
+
     def test_it_only_updates_entries_for_owner(self):
         self.db.create_entry(count=3)
         updates = {'title': 'A new title', 'body': 'A new body'}

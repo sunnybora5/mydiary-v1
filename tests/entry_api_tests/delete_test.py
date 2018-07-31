@@ -14,6 +14,11 @@ class DeleteTestCase(BaseTestCase):
         all_entries = json.loads(self.get('/api/v1/entries').data).get('entries')
         self.assertFalse(any(entry.get('id') == entry_id for entry in all_entries))
 
+    def test_it_allows_trailing_trash(self):
+        entry = self.db.create_entry(overrides={'created_by': self.user_id})
+        response = self.delete('/api/v1/entries/%s/' % str(entry.get('id')))
+        self.assertEqual(response.status_code, 200)
+
     def test_if_fails_when_the_current_user_is_not_the_owner(self):
         entry_id = self.db.create_entry().get('id')
         response = self.delete('/api/v1/entries/%s' % str(entry_id))

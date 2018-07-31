@@ -11,6 +11,10 @@ class CreateTestCase(BaseTestCase):
         self.assertEqual(response.mimetype, 'application/json')
         self.assertDictContainsSubset(new_entry, json.loads(response.data).get('entry'))
 
+    def test_it_allows_trailing_trash(self):
+        response = self.post('/api/v1/entries/', data={'title': 'A title', 'body': 'A body to add'})
+        self.assertEqual(response.status_code, 201)
+
     def test_fails_when_data_does_not_meet_min_length(self):
         short_data = {'title': 'Cook', 'body': 'Short'}
         response = self.post('/api/v1/entries', data=short_data)

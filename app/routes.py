@@ -10,50 +10,50 @@ app = Flask(__name__)
 
 # Define API endpoints
 # Entry resource routes
-@app.route('/api/v1/entries')
+@app.route('/api/v1/entries/', strict_slashes=False)
 @UserController.check_auth
 def all_entries():
     return EntryController.all()
 
 
-@app.route('/api/v1/entries/<int:entry_id>')
+@app.route('/api/v1/entries/<int:entry_id>/', strict_slashes=False)
 @UserController.check_auth
 def get(entry_id):
     return EntryController.get(entry_id)
 
 
-@app.route('/api/v1/entries', methods=['POST'])
+@app.route('/api/v1/entries/', methods=['POST'], strict_slashes=False)
 @UserController.check_auth
 def create():
     return EntryController.create()
 
 
-@app.route('/api/v1/entries/<int:entry_id>', methods=['PUT'])
+@app.route('/api/v1/entries/<int:entry_id>/', methods=['PUT'], strict_slashes=False)
 @UserController.check_auth
 def update(entry_id):
     return EntryController.update(entry_id)
 
 
-@app.route('/api/v1/entries/<int:entry_id>', methods=['DELETE'])
+@app.route('/api/v1/entries/<int:entry_id>/', methods=['DELETE'], strict_slashes=False)
 @UserController.check_auth
 def delete(entry_id):
     return EntryController.delete(entry_id)
 
 
 # Entry stats routes
-@app.route('/api/v1/entries/stats/count', methods=['GET'])
+@app.route('/api/v1/entries/stats/count/', methods=['GET'], strict_slashes=False)
 @UserController.check_auth
 def entry_stat_count():
     return EntryController.count()
 
 
 # User routes
-@app.route('/api/v1/signup', methods=['POST'])
+@app.route('/api/v1/signup/', methods=['POST'], strict_slashes=False)
 def signup():
     return UserController.signup()
 
 
-@app.route('/api/v1/login')
+@app.route('/api/v1/login/', strict_slashes=False)
 def login():
     return UserController.login()
 

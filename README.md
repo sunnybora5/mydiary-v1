@@ -12,6 +12,8 @@ The API is implemented using Flask Python Framework.
 It uses JWT authentication and Postgres database.  The API is minimal in its use of programming abstractions with Flask 
 being the only notable one. It implements it's own custom validator and database abstraction layer.
 
+The API is available at [https://mdiary-v1.herokuapp.com/](https://mdiary-v1.herokuapp.com/).
+
 #### Requirements
 1. `python3` - [Python](https://www.python.org/)
 2. `pip` - [Install pip](https://pip.pypa.io/en/stable/installing/)

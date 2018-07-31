@@ -28,14 +28,21 @@ class EntryController:
     @staticmethod
     def create():
         validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
-        entry = Entry.create(request.form.get('title'), request.form.get('body'), auth.id())
-        if not entry:
+        title = request.form.get('title')
+        body = request.form.get('body')
+        auth_id = auth.id()
+        if Entry.exists({'title': title, 'body': body, 'created_by': auth_id}):
             return jsonify({'message': 'A similar already entry exists.'}), 409
-        return jsonify({'entry': entry}), 201
+        return jsonify({'entry': Entry.create(title, body, auth_id)}), 201
 
     @staticmethod
     def update(entry_id):
         validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
+        title = request.form.get('title')
+        body = request.form.get('body')
+        auth_id = auth.id()
+        if Entry.exists({'title': title, 'body': body, 'created_by': auth_id}):
+            return jsonify({'message': 'A similar already entry exists.'}), 409
         entry = Entry.update(
             {'id': entry_id, 'created_by': auth.id()},
             request.form.get('title'),

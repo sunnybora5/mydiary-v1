@@ -17,8 +17,12 @@ class Entry:
 
     @staticmethod
     def __check(filters):
-        if Entry.__db.exists(filters) is False:
+        if Entry.exists(filters) is False:
             raise ModelNotFoundException
+        
+    @staticmethod    
+    def exists(filters):
+        return Entry.__db.exists(filters)
 
     @staticmethod
     def count(filters=None):

@@ -19,13 +19,13 @@ class BaseTestCase(unittest.TestCase):
     def test_empty_rule_string_works(self):
         request = {'test_field': 'Some value'}
         rules = {'test_field': ''}
-        self.assertTrue(validate(request, rules))
+        self.assertEqual(request, validate(request, rules))
 
     def test_many_fields_can_be_validated(self):
         # without errors
         request = {'test_field': 'Some value', 'test_field2': 'Some other value'}
         rules = {'test_field': 'required', 'test_field2': 'min:5'}
-        self.assertTrue(validate(request, rules))
+        self.assertEqual(request, validate(request, rules))
         # with errors
         request = {'test_field': 'Some value', 'test_field2': 'Some other value'}
         rules = {'test_field': 'max:5', 'test_field2': 'min:20'}
@@ -52,3 +52,15 @@ class BaseTestCase(unittest.TestCase):
         with self.assertRaises(InvalidValidatorException) as context:
             validate(request, rules)
         self.assertTrue('Rule [min:5:17] has so more than one argument.' in str(context.exception))
+
+    def test_it_trims_input(self):
+        request = {
+            'test_field': '  Some value with whitespaces   ',
+            'test_field2': '    Some other value with whitespaces  '
+        }
+        rules = {'test_field': 'required|min:20', 'test_field2': 'required|max:100'}
+        expected = {
+            'test_field': 'Some value with whitespaces',
+            'test_field2': 'Some other value with whitespaces'
+        }
+        self.assertEquals(expected, validate(request, rules))

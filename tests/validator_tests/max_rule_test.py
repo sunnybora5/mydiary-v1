@@ -12,11 +12,11 @@ class MaxRuleTestCase(unittest.TestCase):
         # less than max
         request = {'test_field': 'Less than 15'}
         rules = {'test_field': 'max:15'}
-        self.assertEqual(validate(request, rules), True)
+        self.assertEqual(request, validate(request, rules), True)
         # equal to max
         request = {'test_field': 'Equal 2 fifteen'}
         rules = {'test_field': 'max:15'}
-        self.assertEqual(validate(request, rules), True)
+        self.assertEqual(request, validate(request, rules))
 
     def test_fails_if_field_length_is_less_than_max(self):
         """

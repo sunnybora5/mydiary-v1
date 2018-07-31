@@ -27,9 +27,9 @@ class EntryController:
 
     @staticmethod
     def create():
-        validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
-        title = request.form.get('title')
-        body = request.form.get('body')
+        values = validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
+        title = values.get('title')
+        body = values.get('body')
         auth_id = auth.id()
         if Entry.exists({'title': title, 'body': body, 'created_by': auth_id}):
             return jsonify({'message': 'A similar already entry exists.'}), 409
@@ -37,17 +37,13 @@ class EntryController:
 
     @staticmethod
     def update(entry_id):
-        validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
-        title = request.form.get('title')
-        body = request.form.get('body')
+        values = validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
+        title = values.get('title')
+        body = values.get('body')
         auth_id = auth.id()
         if Entry.exists({'title': title, 'body': body, 'created_by': auth_id}):
             return jsonify({'message': 'A similar already entry exists.'}), 409
-        entry = Entry.update(
-            {'id': entry_id, 'created_by': auth.id()},
-            request.form.get('title'),
-            request.form.get('body')
-        )
+        entry = Entry.update({'id': entry_id, 'created_by': auth_id}, title, body)
         return jsonify({'entry': entry}), 200
 
     @staticmethod
@@ -63,8 +59,8 @@ class UserController:
     @staticmethod
     def signup():
         # create a new user
-        validate(request.form, {'name': 'required', 'email': 'required|email', 'password': 'required|min:6'})
-        created = User.create(request.form.get('name'), request.form.get('email'), request.form.get('password'))
+        values = validate(request.form, {'name': 'required', 'email': 'required|email', 'password': 'required|min:6'})
+        created = User.create(values.get('name'), values.get('email'), values.get('password'))
         if created is False:
             return jsonify({'message': 'A user with the same email address exists.'}), 409
         return jsonify({'message': 'User created.'}), 201

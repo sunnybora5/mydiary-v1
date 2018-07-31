@@ -11,7 +11,7 @@ class Handler:
 
     @staticmethod
     def response_message(code, message=''):
-        return make_response(jsonify({'error': message}), code)
+        return make_response(jsonify({'message': message}), code)
 
     @staticmethod
     def response_object(code, obj):

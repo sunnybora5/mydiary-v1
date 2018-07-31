@@ -37,7 +37,7 @@ class Validator:
     INVALID_TYPE_MSG = 'is of an invalid type.'
 
     def __init__(self, request, rules):
-        self.request = request
+        self.request = {} if request is None else request
         self.validation_rules = rules
 
     @staticmethod

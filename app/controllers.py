@@ -27,7 +27,7 @@ class EntryController:
 
     @staticmethod
     def create():
-        values = validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
+        values = validate(request.json, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
         title = values.get('title')
         body = values.get('body')
         auth_id = auth.id()
@@ -37,7 +37,7 @@ class EntryController:
 
     @staticmethod
     def update(entry_id):
-        values = validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
+        values = validate(request.json, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
         title = values.get('title')
         body = values.get('body')
         auth_id = auth.id()
@@ -59,7 +59,7 @@ class UserController:
     @staticmethod
     def signup():
         # create a new user
-        values = validate(request.form, {'name': 'required', 'email': 'required|email', 'password': 'required|min:6'})
+        values = validate(request.json, {'name': 'required', 'email': 'required|email', 'password': 'required|min:6'})
         created = User.create(values.get('name'), values.get('email'), values.get('password'))
         if created is False:
             return jsonify({'message': 'A user with the same email address exists.'}), 409
@@ -67,24 +67,19 @@ class UserController:
 
     @staticmethod
     def login():
-        _auth = request.authorization
-        # check that username(email in this case) and password are provided.
-        if not _auth or not _auth.username or not _auth.password:
-            message = {'error': 'Login required.'}
-        else:
-            # check that the user actually exists
-            user = User.get_by_email(_auth.username)
-
-            if user:
-                # check the user credentials
-                if User.check(_auth.username, _auth.password):
-                    # generate jwt token
-                    token = User.generate_token(user)
-                    # return token
-                    return jsonify({'token': token.decode('UTF-8')}), 200
-            # the user gave invalid credentials
-            message = {'error': 'Invalid login.'}
-        return jsonify(message), 401
+        data = validate(request.json, {'email': 'required|email', 'password': 'required|min:6'})
+        email = data.get('email')
+        password = data.get('password')
+        user = User.get_by_email(email)
+        if user:
+            # check the user credentials
+            if User.check(email, password):
+                # generate jwt token
+                token = User.generate_token(user)
+                # return token
+                return jsonify({'token': token.decode('UTF-8')}), 200
+        # the user gave invalid credentials
+        return jsonify({'message': 'Invalid login.'}), 401
 
     @staticmethod
     def check_auth(f):
@@ -94,6 +89,7 @@ class UserController:
         :param f:
         :return:
         """
+
         @wraps(f)
         def decorated(*args, **kwargs):
             token = None
@@ -102,13 +98,13 @@ class UserController:
                 token = request.headers.get('x-access-token')
 
             if not token:
-                return jsonify({'error': 'Authentication is required.'}), 401
+                return jsonify({'message': 'Authentication is required.'}), 401
 
             try:
                 data = jwt.decode(token, env('APP_KEY'))
                 auth.set(data.get('user'))
             except:
-                return jsonify({'error': 'Invalid access token.'}), 401
+                return jsonify({'message': 'Invalid access token.'}), 401
 
             return f(*args, **kwargs)
 

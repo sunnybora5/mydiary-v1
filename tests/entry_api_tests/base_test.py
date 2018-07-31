@@ -1,3 +1,4 @@
+import json
 import unittest
 from faker import Faker
 from app import app
@@ -20,10 +21,20 @@ class BaseTestCase(unittest.TestCase):
         return self.client.get(url, headers={'x-access-token': self.token})
 
     def post(self, url, data):
-        return self.client.post(url, data=data, headers={'x-access-token': self.token})
+        return self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type='application/json',
+            headers={'x-access-token': self.token}
+        )
 
     def put(self, url, data):
-        return self.client.put(url, data=data, headers={'x-access-token': self.token})
+        return self.client.put(
+            url,
+            data=json.dumps(data),
+            content_type='application/json',
+            headers={'x-access-token': self.token}
+        )
 
     def delete(self, url):
         return self.client.delete(url, headers={'x-access-token': self.token})

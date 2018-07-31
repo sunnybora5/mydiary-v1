@@ -53,7 +53,7 @@ def signup():
     return UserController.signup()
 
 
-@app.route('/api/v1/login/', strict_slashes=False)
+@app.route('/api/v1/login/', methods=['POST'], strict_slashes=False)
 def login():
     return UserController.login()
 

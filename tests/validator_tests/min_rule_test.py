@@ -12,11 +12,11 @@ class MinRuleTestCase(unittest.TestCase):
         # greater than min
         request = {'test_field': 'Greater than fifteen'}
         rules = {'test_field': 'min:15'}
-        self.assertEqual(validate(request, rules), True)
+        self.assertEqual(request, validate(request, rules), True)
         # equal to min
         request = {'test_field': 'Equal 2 fifteen'}
         rules = {'test_field': 'min:15'}
-        self.assertEqual(validate(request, rules), True)
+        self.assertEqual(request, validate(request, rules), True)
 
     def test_fails_if_field_length_is_less_than_min(self):
         """

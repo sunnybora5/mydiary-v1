@@ -20,7 +20,7 @@ class RequiredRuleTestCase(unittest.TestCase):
         """
         request = {'test_field': 'Some value'}
         rules = {'test_field': 'required'}
-        self.assertEqual(validate(request, rules), True)
+        self.assertEqual(request, validate(request, rules))
 
     def test_required_fails_if_field_is_not_set(self):
         """

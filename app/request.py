@@ -137,7 +137,8 @@ class Validator:
         """
         if field not in self.request:
             return None
-        return self.request[field]
+        field_value = self.request[field]
+        return str(field_value).strip() if type(field_value) is str else field_value
 
     def rules(self, field):
         """
@@ -174,10 +175,12 @@ class Validator:
         return self.value(field) is not None
 
     def validate(self):
+        values = {}  # stores trimmed values for all fields
         all_errors = {}  # stores all validation errors found
         for field in self.fields():
             errors = []  # stores validation errors for current field
             if self.is_set(field):
+                values.update({field: self.value(field)})
                 # current field is set
                 # get value of field on request
                 for rule in self.rules(field):
@@ -212,7 +215,7 @@ class Validator:
         if len(all_errors) > 0:
             # an error or errors were found in any of the fields
             raise ValidationException({'errors': all_errors})
-        return True
+        return values
 
 
 def validate(request, rules):

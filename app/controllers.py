@@ -29,6 +29,8 @@ class EntryController:
     def create():
         validate(request.form, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
         entry = Entry.create(request.form.get('title'), request.form.get('body'), auth.id())
+        if not entry:
+            return jsonify({'message': 'A similar already entry exists.'}), 409
         return jsonify({'entry': entry}), 201
 
     @staticmethod

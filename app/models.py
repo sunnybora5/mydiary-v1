@@ -48,6 +48,8 @@ class Entry:
         Creates an entry and returns a copy.
         :rtype: dict
         """
+        if Entry.__db.exists({'title': title, 'body': body, 'created_by': created_by}):
+            return None
         return Entry.__db.insert({
             'title': title,
             'body': body,

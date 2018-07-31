@@ -47,3 +47,10 @@ class CreateTestCase(BaseTestCase):
             'body': ['The body field is required.'],
         }
         self.assertEqual(errors, json.loads(response.data).get('errors'))
+
+    def test_it_fails_when_a_similar_entry_exists_for_owner(self):
+        data = {'title': 'A title', 'body': 'An entry body', 'created_by': self.user_id}
+        self.db.create_entry(overrides=data)
+        response = self.post('/api/v1/entries', data=data)
+        self.assertEqual(409, response.status_code)
+        self.assertEqual('A similar already entry exists.', json.loads(response.data).get('message'))

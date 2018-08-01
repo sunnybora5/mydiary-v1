@@ -8,3 +8,4 @@ Faker==0.8.17
 py-bcrypt==0.4
 PyJWT==1.6.4
 gunicorn==19.9.0
+flask-cors==3.0.6

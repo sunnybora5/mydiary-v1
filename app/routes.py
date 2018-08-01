@@ -1,5 +1,5 @@
 from flask import Flask, redirect
-from werkzeug.exceptions import HTTPException
+from flask_cors import CORS
 from app.handlers import ExceptionHandler, HttpHandler
 from app.models import ModelNotFoundException
 from app.controllers import EntryController, UserController
@@ -7,6 +7,7 @@ from app.request import ValidationException
 
 # Create flask app
 app = Flask(__name__)
+CORS(app)
 
 
 # Define API endpoints

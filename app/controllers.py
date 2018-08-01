@@ -2,7 +2,7 @@ import jwt
 from functools import wraps
 from flask import jsonify, request
 from app.models import Entry, User
-from app.request import validate, auth
+from app.request import validate
 from utils import env
 
 
@@ -11,44 +11,42 @@ class EntryController:
         pass
 
     @staticmethod
-    def count():
-        entry = Entry.count({'created_by': auth.id()})
+    def count(auth_id):
+        entry = Entry.count({'created_by': auth_id})
         return jsonify({'count': entry}), 200
 
     @staticmethod
-    def all():
-        entries = Entry.all({'created_by': auth.id()})
+    def all(auth_id):
+        entries = Entry.all({'created_by': auth_id})
         return jsonify({'entries': entries, 'count': len(entries)}), 200
 
     @staticmethod
-    def get(entry_id):
-        entry = Entry.get({'id': entry_id, 'created_by': auth.id()})
+    def get(auth_id, entry_id):
+        entry = Entry.get({'id': entry_id, 'created_by': auth_id})
         return jsonify({'entry': entry}), 200
 
     @staticmethod
-    def create():
+    def create(auth_id):
         values = validate(request.json, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
         title = values.get('title')
         body = values.get('body')
-        auth_id = auth.id()
         if Entry.exists({'title': title, 'body': body, 'created_by': auth_id}):
             return jsonify({'message': 'A similar already entry exists.'}), 409
         return jsonify({'entry': Entry.create(title, body, auth_id)}), 201
 
     @staticmethod
-    def update(entry_id):
+    def update(auth_id, entry_id):
         values = validate(request.json, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
         title = values.get('title')
         body = values.get('body')
-        auth_id = auth.id()
         if Entry.exists({'title': title, 'body': body, 'created_by': auth_id}):
             return jsonify({'message': 'A similar already entry exists.'}), 409
         entry = Entry.update({'id': entry_id, 'created_by': auth_id}, title, body)
         return jsonify({'entry': entry}), 200
 
     @staticmethod
-    def delete(entry_id):
-        Entry.delete({'id': entry_id, 'created_by': auth.id()})
+    def delete(auth_id, entry_id):
+        Entry.delete({'id': entry_id, 'created_by': auth_id})
         return jsonify({'message': 'Entry deleted.'}), 200
 
 
@@ -102,10 +100,11 @@ class UserController:
 
             try:
                 data = jwt.decode(token, env('APP_KEY'))
-                auth.set(data.get('user'))
+                auth_id = data.get('id')
+                print(auth_id)
             except:
                 return jsonify({'message': 'Invalid access token.'}), 401
 
-            return f(*args, **kwargs)
+            return f(auth_id, *args, **kwargs)
 
         return decorated

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect
 from app.handlers import ExceptionHandler, HttpHandler
 from app.models import ModelNotFoundException
 from app.controllers import EntryController, UserController
@@ -9,6 +9,11 @@ app = Flask(__name__)
 
 
 # Define API endpoints
+@app.route('/')
+def documentation():
+    return redirect('https://mydiaryv1.docs.apiary.io')
+
+
 # Entry resource routes
 @app.route('/api/v1/entries/', strict_slashes=False)
 @UserController.check_auth

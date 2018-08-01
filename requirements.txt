@@ -7,3 +7,4 @@ psycopg2-binary==2.7.5
 Faker==0.8.17
 py-bcrypt==0.4
 PyJWT==1.6.4
+gunicorn==19.9.0

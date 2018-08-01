@@ -38,5 +38,7 @@ class HttpHandler(Handler):
     def handle(code):
         if code == 404:
             return Handler.response_message(404, NOT_FOUND_MSG)
-        if code == 500:
-            return Handler.response_message(500, SERVER_ERROR_MSG)
+        if code == 405:
+            return Handler.response_message(404, NOT_FOUND_MSG)
+        # 500 is the fallback
+        return Handler.response_message(500, SERVER_ERROR_MSG)

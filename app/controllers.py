@@ -39,7 +39,7 @@ class EntryController:
         values = validate(request.json, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
         title = values.get('title')
         body = values.get('body')
-        if Entry.exists({'title': title, 'body': body, 'created_by': auth_id}):
+        if Entry.exists({'id': entry_id, 'title': title, 'body': body, 'created_by': auth_id}):
             return jsonify({'message': 'A similar already entry exists.'}), 409
         entry = Entry.update({'id': entry_id, 'created_by': auth_id}, title, body)
         return jsonify({'entry': entry}), 200

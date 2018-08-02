@@ -1,5 +1,4 @@
 from flask import Flask, redirect
-from werkzeug.exceptions import HTTPException
 from app.handlers import ExceptionHandler, HttpHandler
 from app.models import ModelNotFoundException
 from app.controllers import EntryController, UserController

@@ -27,7 +27,7 @@ class EntryController:
 
     @staticmethod
     def create(auth_id):
-        values = validate(request.json, {'title': 'required|max:255', 'body': 'required|max:1000'})
+        values = validate(request.json, {'title': 'required|min:1|max:255', 'body': 'required|min:1|max:1000'})
         title = values.get('title')
         body = values.get('body')
         if Entry.exists({'title': title, 'body': body, 'created_by': auth_id}):
@@ -36,7 +36,7 @@ class EntryController:
 
     @staticmethod
     def update(auth_id, entry_id):
-        values = validate(request.json, {'title': 'required|max:255', 'body': 'required|max:1000'})
+        values = validate(request.json, {'title': 'required|min:1|max:255', 'body': 'required|min:1|max:1000'})
         title = values.get('title')
         body = values.get('body')
         if Entry.exists({'id': entry_id, 'title': title, 'body': body, 'created_by': auth_id}):
@@ -65,7 +65,7 @@ class UserController:
 
     @staticmethod
     def login():
-        data = validate(request.json, {'email': 'required|email', 'password': 'required'})
+        data = validate(request.json, {'email': 'required|email', 'password': 'required|min:6'})
         email = data.get('email')
         password = data.get('password')
         user = User.get_by_email(email)
@@ -101,7 +101,6 @@ class UserController:
             try:
                 data = jwt.decode(token, env('APP_KEY'))
                 auth_id = data.get('id')
-                print(auth_id)
             except:
                 return jsonify({'message': 'Invalid access token.'}), 401
 

@@ -31,13 +31,13 @@ class UpdateTestCase(BaseTestCase):
         self.assertEqual({"message": "The entry was not found."}, json.loads(response.data))
 
     def test_fails_when_data_does_not_meet_min_length(self):
-        short_data = {'title': 'Cook', 'body': 'Short'}
+        short_data = {'title': '', 'body': ''}
         response = self.put('/api/v1/entries/4', data=short_data)
         self.assertEqual(response.status_code, 422)
         self.assertEqual(response.mimetype, 'application/json')
         errors = {
-            'title': ['The title field must have a minimum length of 5.'],
-            'body': ['The body field must have a minimum length of 10.'],
+            'title': ['The title field must have a minimum length of 1.'],
+            'body': ['The body field must have a minimum length of 1.'],
         }
         self.assertEqual(errors, json.loads(response.data).get('errors'))
 

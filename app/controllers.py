@@ -27,7 +27,7 @@ class EntryController:
 
     @staticmethod
     def create(auth_id):
-        values = validate(request.json, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
+        values = validate(request.json, {'title': 'required|min:1|max:255', 'body': 'required|min:1|max:1000'})
         title = values.get('title')
         body = values.get('body')
         if Entry.exists({'title': title, 'body': body, 'created_by': auth_id}):
@@ -36,7 +36,7 @@ class EntryController:
 
     @staticmethod
     def update(auth_id, entry_id):
-        values = validate(request.json, {'title': 'required|min:5|max:255', 'body': 'required|min:10|max:1000'})
+        values = validate(request.json, {'title': 'required|min:1|max:255', 'body': 'required|min:1|max:1000'})
         title = values.get('title')
         body = values.get('body')
         if Entry.exists({'id': entry_id, 'title': title, 'body': body, 'created_by': auth_id}):
@@ -101,7 +101,6 @@ class UserController:
             try:
                 data = jwt.decode(token, env('APP_KEY'))
                 auth_id = data.get('id')
-                print(auth_id)
             except:
                 return jsonify({'message': 'Invalid access token.'}), 401
 

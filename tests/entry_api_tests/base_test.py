@@ -15,7 +15,7 @@ class BaseTestCase(unittest.TestCase):
         user = self.db.create_user()
         self.user_id = user.get('id')
         self.client = app.test_client(self)
-        self.token = User.generate_token(user)
+        self.token = User.generate_token(user).get('token')
 
     def get(self, url):
         return self.client.get(url, headers={'x-access-token': self.token})

@@ -9,7 +9,7 @@ class ModelNotFoundException(Exception):
     def __init__(self, model):
         if model == 'entry':
             super(ModelNotFoundException, self).__init__('The entry was not found.')
-            
+
 
 class Entry:
     __db = DBQuery('entries')
@@ -21,8 +21,8 @@ class Entry:
     def __check(filters):
         if Entry.exists(filters) is False:
             raise ModelNotFoundException('entry')
-        
-    @staticmethod    
+
+    @staticmethod
     def exists(filters):
         return Entry.__db.exists(filters)
 
@@ -128,10 +128,16 @@ class User:
 
     @staticmethod
     def generate_token(user):
+        expiry = datetime.datetime.utcnow() + datetime.timedelta(minutes=int(env('SESSION_LIFETIME')))
+        # ensure that the expiry is utc
+        expiry = expiry.replace(tzinfo=datetime.timezone.utc)
         # token payload
         payload = {
+            'exp': expiry,
             'id': user.get('id'),
             'email': user.get('email'),
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=int(env('SESSION_LIFETIME')))
         }
-        return jwt.encode(payload, env('APP_KEY'))
+        return {
+            'expiry': int(expiry.timestamp()),
+            'token': (jwt.encode(payload, env('APP_KEY')).decode('UTF-8')),
+        }

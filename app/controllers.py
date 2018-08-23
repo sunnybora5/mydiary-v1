@@ -72,10 +72,8 @@ class UserController:
         if user:
             # check the user credentials
             if User.check(email, password):
-                # generate jwt token
-                token = User.generate_token(user)
-                # return token
-                return jsonify({'token': token.decode('UTF-8')}), 200
+                # generate jwt token and return token
+                return jsonify(User.generate_token(user)), 200
         # the user gave invalid credentials
         return jsonify({'message': 'Invalid login.'}), 401
 

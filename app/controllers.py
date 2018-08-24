@@ -11,11 +11,6 @@ class EntryController:
         pass
 
     @staticmethod
-    def count(auth_id):
-        entry = Entry.count({'created_by': auth_id})
-        return jsonify({'count': entry}), 200
-
-    @staticmethod
     def all(auth_id):
         entries = Entry.all({'created_by': auth_id})
         return jsonify({'entries': entries, 'count': len(entries)}), 200
@@ -72,12 +67,24 @@ class UserController:
         if user:
             # check the user credentials
             if User.check(email, password):
-                # generate jwt token
-                token = User.generate_token(user)
-                # return token
-                return jsonify({'token': token.decode('UTF-8')}), 200
+                # generate jwt token and return token
+                return jsonify(User.generate_token(user)), 200
         # the user gave invalid credentials
         return jsonify({'message': 'Invalid login.'}), 401
+
+    @staticmethod
+    def profile(auth_id):
+        user = User.get({'id': auth_id})
+        name = user.get('name')
+        since = user.get('created_at')
+        entry_count = Entry.count({'created_by': auth_id})
+        latest_entry = Entry.all({'created_by': auth_id})[0] if entry_count else None
+        return jsonify({
+            'name': name,
+            'since': since,
+            'entry_count': entry_count,
+            'latest_entry': latest_entry
+        })
 
     @staticmethod
     def check_auth(f):

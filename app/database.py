@@ -52,7 +52,6 @@ class DBQuery:
         """
         aggregate = []
         for item in attributes:
-
             aggregate.append(
                 sql.SQL("{} = {}").format(
                     sql.Identifier(item), sql.Placeholder()
@@ -158,28 +157,28 @@ class DBQuery:
         """
         if fields is '*':
             if filters is None:
-                query = sql.SQL("select * from {}").format(
+                query = sql.SQL("select * from {} order by id desc").format(
                     sql.Identifier(self.table)
                 )
                 self.cursor.execute(query)
             else:
-                query = sql.SQL("select * from {} where {}").format(
+                query = sql.SQL("select * from {} where {} order by id desc").format(
                     sql.Identifier(self.table),
-                    DBQuery.__x_equals_y_and_clause(filters)
+                    DBQuery.__x_equals_y_and_clause(filters),
                 )
                 self.cursor.execute(query, list(filters.values()))
         else:
             if filters is None:
-                query = sql.SQL("select {} from {}").format(
+                query = sql.SQL("select {} from {} order by id desc").format(
                     sql.SQL(', ').join(map(sql.Identifier, fields)),
                     sql.Identifier(self.table),
                 )
                 self.cursor.execute(query)
             else:
-                query = sql.SQL("select {} from {} where {}").format(
+                query = sql.SQL("select {} from {} where {} order by id desc").format(
                     sql.SQL(', ').join(map(sql.Identifier, fields)),
                     sql.Identifier(self.table),
-                    DBQuery.__x_equals_y_and_clause(filters)
+                    DBQuery.__x_equals_y_and_clause(filters),
                 )
                 self.cursor.execute(query, list(filters.values()))
         return self.cursor.fetchall()
@@ -202,6 +201,5 @@ class DBQuery:
 
     def raw(self, query, fetch=False):
         self.cursor.execute(query)
-        self.connection.commit()
         if fetch is True:
             return self.cursor.fetchall()

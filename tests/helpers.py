@@ -1,7 +1,6 @@
 from psycopg2 import extras, sql
 from faker import Faker
 from app.database import DBConnection
-from app.models import User
 from utils import full_path
 
 
@@ -122,7 +121,7 @@ class DBUtils:
             # get id of inserted item
             item_ids.append(self.cursor.fetchone().get('id'))
         # build query to retrieve just inserted item
-        query = sql.SQL("select * from {} where id in ({})").format(
+        query = sql.SQL("select * from {} where id in ({}) order by id desc").format(
             sql.Identifier(table),
             sql.SQL(', ').join(sql.Placeholder() * len(item_ids))
         )

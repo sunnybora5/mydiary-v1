@@ -45,13 +45,6 @@ def delete(auth_id, entry_id):
     return EntryController.delete(auth_id, entry_id)
 
 
-# Entry stats routes
-@app.route('/api/v1/entries/stats/count/', methods=['GET'], strict_slashes=False)
-@UserController.check_auth
-def entry_stat_count(auth_id):
-    return EntryController.count(auth_id)
-
-
 # User routes
 @app.route('/api/v1/signup/', methods=['POST'], strict_slashes=False)
 def signup():
@@ -61,6 +54,12 @@ def signup():
 @app.route('/api/v1/login/', methods=['POST'], strict_slashes=False)
 def login():
     return UserController.login()
+
+
+@app.route('/api/v1/profile/', methods=['GET'], strict_slashes=False)
+@UserController.check_auth
+def profile(auth_id):
+    return UserController.profile(auth_id)
 
 
 # Define API error handlers
@@ -87,4 +86,3 @@ def not_found(error):
 @app.errorhandler(500)
 def not_found(error):
     return HttpHandler.handle(500)
-

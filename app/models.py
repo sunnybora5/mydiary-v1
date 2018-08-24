@@ -101,6 +101,15 @@ class User:
         return bcrypt.checkpw(password, hashed)
 
     @staticmethod
+    def get(filters):
+        """
+        Returns the specified user.
+        :param filters:
+        :rtype: dict or None
+        """
+        return User.__db.get(filters)
+
+    @staticmethod
     def get_by_email(email):
         selection = User.__db.select('*', {'email': email})
         return selection[0] if len(selection) > 0 else None

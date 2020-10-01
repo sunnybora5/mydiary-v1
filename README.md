@@ -73,7 +73,7 @@ Run the tests
 
 `$ pytest`
 
-#### Running app
+#### Exicuting app
 Create a production/staging database 
 
 `$ psql -c 'create database <your_database_name>;' -U <postgres_username>`
